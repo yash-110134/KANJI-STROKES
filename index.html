@@ -3,63 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kanji Mastery: Guided Tracing</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<title>Kanji Mastery: Guided Tracing & Compounds</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500;600&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- HanziWriter Library for Guided Stroke Order -->
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 
 <style>
+    * {
+        box-sizing: border-box;
+    }
+
     :root {
         --bg-color: #0c0c0e;
         --panel-bg: #151518;
+        --card-bg: #1a1a22;
+        --card-hover: #22222c;
         --text-main: #f5f5f5;
-        --text-muted: #888;
+        --text-muted: #888892;
         --red-accent: #e53935;
         --red-hover: #ff6161;
-        --gray-border: #333;
+        --green-correct: #4caf50;
+        --gray-border: #2e2e38;
     }
 
     body {
         background-color: var(--bg-color);
         color: var(--text-main);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-height: 100vh;
     }
 
     header {
         width: 100%;
         background-color: var(--panel-bg);
-        padding: 20px;
+        padding: 20px 15px;
         text-align: center;
         border-bottom: 2px solid var(--red-accent);
-        box-sizing: border-box;
     }
 
     h1, h2, h3 { margin: 0; padding: 0; }
-    h1 { color: var(--text-main); margin-bottom: 15px; font-weight: 600; letter-spacing: 1px;}
+    h1 { color: var(--text-main); margin-bottom: 15px; font-weight: 600; letter-spacing: 1px; }
     h1 span { color: var(--red-accent); }
 
     .controls {
         display: flex;
-        gap: 15px;
+        gap: 12px;
         justify-content: center;
         flex-wrap: wrap;
     }
 
     select, button {
-        background-color: #222;
+        background-color: #22222a;
         color: white;
         border: 1px solid var(--gray-border);
-        padding: 10px 15px;
+        padding: 10px 16px;
         border-radius: 6px;
         font-size: 15px;
         cursor: pointer;
         outline: none;
         transition: all 0.2s;
+    }
+
+    select {
+        max-width: 90vw;
     }
 
     button {
@@ -69,21 +80,21 @@
     }
 
     button:hover { background-color: var(--red-hover); transform: translateY(-1px); }
-    button:disabled { background-color: #444; cursor: not-allowed; transform: none; color: #888;}
+    button:disabled { background-color: #444; cursor: not-allowed; transform: none; color: #888; }
 
-    .mode-switch { margin-top: 20px; display: flex; gap: 10px; justify-content: center;}
-    .mode-btn { background-color: #2a2a30; border: 1px solid #3a3a40; color: #aaa; }
+    .mode-switch { margin-top: 18px; display: flex; gap: 10px; justify-content: center; }
+    .mode-btn { background-color: #26262e; border: 1px solid #363642; color: #aaa; }
     .mode-btn.active { background-color: var(--red-accent); color: white; border-color: var(--red-accent); }
 
     .container {
-        width: 90%;
+        width: 92%;
         max-width: 550px;
         background-color: var(--panel-bg);
-        margin-top: 30px;
-        margin-bottom: 50px;
-        padding: 35px;
+        margin-top: 25px;
+        margin-bottom: 40px;
+        padding: 28px 22px;
         border-radius: 12px;
-        border: 1px solid #222;
+        border: 1px solid #24242c;
         box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         display: none; 
         flex-direction: column;
@@ -92,52 +103,136 @@
 
     .container.active { display: flex; }
 
-    /* Elegant Calligraphic Font for Kanji (Only used in MCQs now) */
+    /* Stepper Navigation Pills for Kanji & its Compound Words */
+    .practice-stepper {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .step-pill {
+        background: #1e1e26;
+        color: #8e8e9c;
+        border: 1px solid #2e2e3a;
+        padding: 5px 11px;
+        border-radius: 16px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+    }
+
+    .step-pill:hover {
+        background: #282834;
+        color: #ddd;
+        border-color: #444456;
+    }
+
+    .step-pill.active {
+        background: var(--red-accent);
+        color: white;
+        border-color: var(--red-accent);
+        font-weight: 600;
+        box-shadow: 0 0 10px rgba(229, 57, 53, 0.4);
+    }
+
+    .step-pill.done:not(.active) {
+        border-color: #3b5e40;
+        color: #b0e0b3;
+    }
+
+    .step-pill.done::after {
+        content: " ✓";
+        font-size: 10px;
+        color: #81c784;
+    }
+
+    /* Display Header */
     .kanji-display {
-        font-family: 'Shippori Mincho', 'Noto Serif JP', 'Yu Mincho', 'MS Mincho', serif;
+        font-family: 'Shippori Mincho', 'Noto Serif JP', 'Yu Mincho', serif;
         font-weight: 400;
-        font-size: 130px;
-        margin: 10px 0 20px 0;
-        text-shadow: 0 0 20px rgba(255,255,255,0.05);
-        line-height: 1.2;
+        font-size: clamp(44px, 10vw, 72px);
+        margin: 6px 0 14px 0;
+        text-shadow: 0 0 20px rgba(255,255,255,0.06);
+        line-height: 1.25;
+        text-align: center;
     }
 
     ruby { ruby-align: center; }
     
     rt {
-        font-family: 'Segoe UI', 'Meiryo', sans-serif;
-        font-size: 24px;
+        font-family: 'Segoe UI', Meiryo, sans-serif;
+        font-size: 18px;
         color: var(--text-muted);
         font-weight: 400;
-        transform: translateY(-5px);
+        transform: translateY(-4px);
     }
 
     .meanings-display {
         color: var(--red-accent);
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 600;
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 16px;
         letter-spacing: 0.5px;
     }
 
-    /* Guided Drawing Area Styles */
-    .canvas-container {
+    /* Guided Drawing Canvas Styles (Single for Base Kanji, Dual for 2-Kanji Compounds) */
+    .canvas-stage {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .single-canvas-container {
         position: relative;
-        margin-bottom: 15px;
-        background-color: #0a0a0c;
-        border: 1px solid #333;
+        background-color: #09090c;
+        border: 1px solid #2e2e38;
         border-radius: 8px;
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        width: 320px;
-        height: 320px;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        width: 290px;
+        height: 290px;
+        max-width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    /* This holds the interactive SVG generated by HanziWriter */
-    #kanji-writer-target {
+    .dual-canvas-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .char-box {
+        position: relative;
+        background-color: #09090c;
+        border: 1px solid #2e2e38;
+        border-radius: 8px;
+        box-shadow: inset 0 0 16px rgba(0,0,0,0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .char-box.completed {
+        border-color: var(--green-correct);
+        box-shadow: 0 0 12px rgba(76, 175, 80, 0.25), inset 0 0 16px rgba(0,0,0,0.6);
+    }
+
+    .writer-target {
         width: 100%;
         height: 100%;
         cursor: pointer;
@@ -146,56 +241,234 @@
 
     .canvas-label {
         position: absolute;
-        bottom: -25px;
+        bottom: -22px;
         width: 100%;
         text-align: center;
-        color: #555;
-        font-size: 12px;
-        letter-spacing: 2px;
+        color: #555562;
+        font-size: 11px;
+        letter-spacing: 1.5px;
         pointer-events: none;
+        font-weight: 600;
     }
 
-    .draw-controls { margin-top: 25px; display: flex; gap: 12px; }
+    .trace-status-banner {
+        min-height: 22px;
+        font-size: 13.5px;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 18px;
+        color: var(--text-muted);
+    }
 
+    .trace-status-banner.success {
+        color: var(--green-correct);
+    }
+
+    .draw-controls {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .draw-controls button {
+        padding: 9px 15px;
+        font-size: 14px;
+    }
+
+    /* Compound Words Box (Practice Mode) */
+    .compounds-section {
+        width: 100%;
+        margin-top: 24px;
+        background: #0e0e12;
+        border: 1px solid #23232c;
+        border-radius: 10px;
+        padding: 16px 18px;
+    }
+
+    .compounds-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #202028;
+    }
+
+    .compounds-header span {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-muted);
+    }
+
+    .compounds-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .compound-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card-bg);
+        border: 1px solid var(--gray-border);
+        border-radius: 8px;
+        padding: 10px 14px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .compound-card:hover {
+        background: var(--card-hover);
+        border-color: #444455;
+    }
+
+    .compound-card.active-compound {
+        border-color: var(--red-accent);
+        background: #25181a;
+        box-shadow: 0 0 10px rgba(229, 57, 53, 0.25);
+    }
+
+    .compound-word-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .compound-badge {
+        font-size: 10.5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #2b2b36;
+        color: #aaa;
+    }
+
+    .compound-card.active-compound .compound-badge {
+        background: var(--red-accent);
+        color: white;
+    }
+
+    .compound-word {
+        font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+        font-size: 20px;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 1.3;
+    }
+
+    .compound-word rt {
+        font-family: 'Segoe UI', Meiryo, sans-serif;
+        font-size: 11px;
+        color: #9a9ab0;
+    }
+
+    .compound-meaning {
+        font-size: 13.5px;
+        color: #c4c4cc;
+        text-align: right;
+        max-width: 52%;
+        font-weight: 400;
+    }
+
+    /* MCQ & Test Options */
     .mcq-options {
         display: flex;
         flex-direction: column;
         gap: 12px;
         width: 100%;
-        margin: 25px 0;
+        margin: 20px 0;
     }
 
     .mcq-option {
-        background: #1a1a20;
-        padding: 16px;
+        background: var(--card-bg);
+        padding: 14px 16px;
         border-radius: 8px;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
         cursor: pointer;
-        border: 1px solid #2a2a30;
+        border: 1px solid var(--gray-border);
         transition: background 0.2s, border-color 0.2s;
+        user-select: none;
     }
 
-    .mcq-option:hover { background: #22222a; border-color: #444; }
+    .mcq-option:hover {
+        background: var(--card-hover);
+        border-color: #4a4a58;
+    }
+
+    .mcq-option.selected {
+        border-color: var(--red-accent);
+        background: #251b20;
+    }
+
+    .mcq-option.correct-highlight {
+        background: #112816 !important;
+        border-color: var(--green-correct) !important;
+    }
+
+    .mcq-option.incorrect-highlight {
+        background: #331416 !important;
+        border-color: var(--red-accent) !important;
+    }
     
-    input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
         accent-color: var(--red-accent);
         cursor: pointer;
+        flex-shrink: 0;
     }
 
-    .feedback { margin: 15px 0; font-size: 17px; font-weight: 600; text-align: center; min-height: 25px;}
-    .correct { color: #4caf50; }
+    .feedback {
+        margin: 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        min-height: 25px;
+    }
+    .correct { color: var(--green-correct); }
     .incorrect { color: var(--red-accent); }
-    .progress { color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;}
+    .progress {
+        color: var(--text-muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
     
     .instruction-text {
         text-align: center;
-        color: #aaa;
+        color: #aaaab4;
         font-size: 14px;
-        margin-top: -10px;
+        margin-top: -6px;
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 20px 14px;
+            width: 95%;
+        }
+        .compound-card {
+            padding: 8px 10px;
+        }
+        .compound-word {
+            font-size: 18px;
+        }
+        .compound-meaning {
+            font-size: 12.5px;
+        }
+        .step-pill {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
     }
 </style>
 </head>
@@ -219,7 +492,7 @@
             <option value="12">12. Measurement, Systems & Infra</option>
             <option value="13">13. Core Terminology & Media</option>
         </select>
-        <button onclick="startRandomTest()">Start 20-Kanji Test</button>
+        <button onclick="startRandomTest()">Start 20-Word Test</button>
     </div>
     <div class="mode-switch">
         <button id="btnPractice" class="mode-btn active" onclick="setMode('practice')">Practice (Trace)</button>
@@ -229,21 +502,36 @@
 
 <!-- Practice Mode -->
 <div id="practiceMode" class="container active">
-    <div id="pracProgress" class="progress">Kanji 1 / 50</div>
+    <div id="pracProgress" class="progress">Kanji 1 / 50 • Base Character</div>
     
-    <!-- Furigana above the drawing canvas -->
-    <ruby style="margin-bottom: 5px;"><rt id="pracFurigana" style="font-size:28px;">いち</rt></ruby>
+    <!-- Stepper Navigation Pills -->
+    <div id="pracStepper" class="practice-stepper"></div>
+
+    <!-- Furigana and Display -->
+    <ruby style="margin-bottom: 5px;">
+        <span id="pracDisplayChar" style="display:none;"></span>
+        <rt id="pracFurigana" style="font-size:26px;">いち</rt>
+    </ruby>
     <div id="pracMeanings" class="meanings-display">One</div>
     
-    <!-- Guided HanziWriter Target Div -->
-    <div class="canvas-container">
-        <div id="kanji-writer-target"></div>
-        <div class="canvas-label">TRACE STROKE ORDER HERE</div>
-    </div>
+    <!-- Guided Tracing Canvas Stage (Swaps between 1 canvas for base kanji and 2 canvases for 2-kanji compounds) -->
+    <div id="pracCanvasStage" class="canvas-stage"></div>
+
+    <div id="pracStatusBanner" class="trace-status-banner">Trace stroke order in the box above</div>
     
     <div class="draw-controls">
-        <button style="background-color: #333;" onclick="animateStrokeOrder()">Animate Strokes</button>
-        <button onclick="nextPractice()">Next Kanji ➔</button>
+        <button id="btnPrev" style="background-color: #272732;" onclick="prevPractice()">◀ Prev</button>
+        <button style="background-color: #383848;" onclick="animateStrokeOrder()">Animate Strokes</button>
+        <button id="btnNext" onclick="nextPractice()">Next ➔</button>
+    </div>
+
+    <!-- 4-5 Compound Words Container Directly Under Tracing Canvas -->
+    <div class="compounds-section">
+        <div class="compounds-header">
+            <span>Common Compounds (熟語)</span>
+            <span style="font-size:11px; text-transform:none; color:#777;">Click to practice</span>
+        </div>
+        <div id="pracCompoundsList" class="compounds-grid"></div>
     </div>
 </div>
 
@@ -251,23 +539,23 @@
 <div id="mcqMode" class="container">
     <div id="mcqProgress" class="progress">Kanji 1 / 50</div>
     <div class="kanji-display">
-        <ruby><span id="mcqKanji">一</span><rt id="mcqFurigana">いち</rt></ruby>
+        <ruby><span id="mcqKanji">一日</span><rt id="mcqFurigana">いちにち</rt></ruby>
     </div>
-    <p class="instruction-text">Select <b>ALL</b> correct meanings for this Kanji:</p>
+    <p class="instruction-text">Select the correct meaning for this compound word:</p>
     
     <div id="mcqOptions" class="mcq-options"></div>
     <div id="mcqFeedback" class="feedback"></div>
-    <button id="mcqSubmitBtn" onclick="checkMCQ()" style="width:100%; padding: 15px; font-size: 16px;">Submit Answer</button>
+    <button id="mcqSubmitBtn" onclick="checkMCQ()" style="width:100%; padding: 15px; font-size: 16px;">Check Answer</button>
 </div>
 
 <!-- Test Mode -->
 <div id="testMode" class="container">
-    <h2 style="color:var(--red-accent); margin-bottom: 10px; font-weight: 600;">Randomized Test</h2>
+    <h2 style="color:var(--red-accent); margin-bottom: 10px; font-weight: 600;">Randomized 20-Word Test</h2>
     <div id="testProgress" class="progress">Question 1 / 20</div>
     <div class="kanji-display">
-        <ruby><span id="testKanji">一</span><rt id="testFurigana">いち</rt></ruby>
+        <ruby><span id="testKanji">一日</span><rt id="testFurigana">いちにち</rt></ruby>
     </div>
-    <p class="instruction-text">Select <b>ALL</b> correct meanings:</p>
+    <p class="instruction-text">Select the correct meaning for this compound word:</p>
     
     <div id="testOptions" class="mcq-options"></div>
     <div id="testFeedback" class="feedback"></div>
@@ -275,52 +563,84 @@
 </div>
 
 <script>
-// Verified 650 Kanji Database with Furigana
+// Expanded 650 Kanji Database with Verified Furigana and 4-5 Common Compounds (熟語)
 const rawData = {
-    1: "一:いち:One|二:に:Two|三:さん:Three|四:よん:Four|五:ご:Five|六:ろく:Six|七:なな:Seven|八:はち:Eight|九:きゅう:Nine|十:じゅう:Ten|百:ひゃく:Hundred|千:せん:Thousand|万:まん:Ten thousand|間:あいだ:Interval,Space,Between|円:えん:Yen,Circle|倍:ばい:Double,Times,Fold|半:はん:Half|毎:まい:Every|今:いま:Now|先:さき:Before,Ahead,Future|来:らい:Come,Next|昔:むかし:Long ago,Past|次:つぎ:Next|何:なに:What|日:にち:Day,Sun|月:つき:Month,Moon|火:ひ:Fire|水:みず:Water|点:てん:Point,Dot,Score|金:きん:Gold,Money,Friday|土:つち:Earth,Soil,Saturday|年:とし:Year|週:しゅう:Week|時:じ:Time,Hour|分:ふん:Minute,Part,Understand|秒:びょう:Second (time)|曜:よう:Day of the week|朝:あさ:Morning|昼:ひる:Noon,Daytime|夜:よる:Night|晩:ばん:Evening,Night|夕:ゆう:Evening|春:はる:Spring|夏:なつ:Summer|秋:あき:Autumn,Fall|冬:ふゆ:Winter|季:き:Season|節:せつ:Season,Joint,Node|期:き:Period,Time,Term|始:はじ:Begin,Start",
-    2: "天:てん:Heaven,Sky|気:き:Spirit,Mind,Atmosphere,Mood|空:そら:Sky,Empty|晴:はれ:Clear weather,Sunny|曇:くもり:Cloudy weather|雨:あめ:Rain|雪:ゆき:Snow|風:かぜ:Wind|雲:くも:Cloud|雷:かみなり:Thunder,Lightning|温:あたた:Warm (things/temp)|暖:あたた:Warm (weather/climate)|涼:すず:Cool,Refreshing|寒:さむ:Cold (weather)|暑:あつ:Hot (weather)|熱:あつ:Heat,Hot (things),Fever|氷:こおり:Ice|炭:すみ:Charcoal,Coal|石:いし:Stone,Rock|光:ひかり:Light,Ray|星:ほし:Star|山:やま:Mountain|川:かわ:River|海:うみ:Sea,Ocean|島:しま:Island|湖:みずうみ:Lake|岸:きし:Shore,Bank,Coast|岩:いわ:Rock,Boulder,Crag|砂:すな:Sand|泉:いずみ:Spring,Fountain|滝:たき:Waterfall|谷:たに:Valley|原:はら:Field,Meadow,Original|鉱:こう:Mineral,Ore|鉄:てつ:Iron|油:あぶら:Oil|波:なみ:Wave|陸:りく:Land,Shore|上:うえ:Up,Above,Over|下:した:Down,Below,Under|左:ひだり:Left|右:みぎ:Right|中:なか:Middle,Inside,Center|外:そと:Outside,Outer|広:ひろ:Wide,Broad,Spacious|狭:せま:Narrow,Cramped|高:たか:High,Tall,Expensive|低:ひく:Low|深:ふか:Deep|浅:あさ:Shallow",
-    3: "男:おとこ:Man,Male|女:おんな:Woman,Female|子:こ:Child|父:ちち:Father|母:はは:Mother|兄:あに:Older brother|弟:おとうと:Younger brother|姉:あね:Older sister|妹:いもうと:Younger sister|親:おや:Parent,Intimacy,Relative|族:ぞく:Family,Tribe|夫:おっと:Husband|妻:つま:Wife|娘:むすめ:Daughter,Girl|祖:そ:Ancestor,Grandparent|友:とも:Friend|人:ひと:Person|私:わたし:I,Me,Private|者:もの:Person (formal)|員:いん:Member,Employee|徒:と:Follower,Pupil,Walking|客:きゃく:Guest,Customer|婦:ふ:Lady,Woman,Wife|供:とも:Companion,Offer|達:たち:Plural marker,Accomplish|君:きみ:You,Buddy,Suffix for males|力:ちから:Power,Strength,Force|名:な:Name,Reputation|目:め:Eye,Item|耳:みみ:Ear|口:くち:Mouth|手:て:Hand|足:あし:Foot,Leg,Sufficient|頭:あたま:Head|顔:かお:Face|首:くび:Neck|肩:かた:Shoulder|鼻:はな:Nose|歯:は:Tooth|指:ゆび:Finger,Point|髪:かみ:Hair|胸:むね:Chest,Breast|腹:はら:Abdomen,Belly|背:せ:Back,Stature|骨:ほね:Bone|血:ち:Blood|心:こころ:Heart,Mind,Spirit|命:いのち:Life,Fate,Destiny|身:み:Body,Oneself,Social position|体:からだ:Body,Form",
-    4: "鳥:とり:Bird|魚:さかな:Fish|犬:いぬ:Dog|猫:ねこ:Cat|牛:うし:Cow,Cattle|馬:うま:Horse|虫:むし:Insect,Bug|羊:ひつじ:Sheep|豚:ぶた:Pig,Pork|鶏:にわとり:Chicken|獣:けもの:Beast,Animal|毛:け:Hair,Fur,Wool|白:しろ:White|赤:あか:Red|青:あお:Blue,Green|黒:くろ:Black|黄:き:Yellow|色:いろ:Color|暗:くら:Dark|明:あか:Bright,Clear|新:あたら:New|古:ふる:Old (things)|多:おお:Many,Much|少:すく:Few,Little|安:やす:Cheap,Safe,Peaceful|重:おも:Heavy,Important|軽:かる:Light (weight)|痛:いた:Pain,Hurt|苦:くる:Bitter,Suffering,Hardship|悲:かな:Sad|喜:よろこ:Rejoice,Glad|怒:おこ:Angry|恥:はじ:Shame,Embarrassment|弱:よわ:Weak|強:つよ:Strong|忙:いそが:Busy|暇:ひま:Free time,Leisure|早:はや:Early,Fast|遅:おそ:Late,Slow|遠:とお:Far,Distant|近:ちか:Near,Close|良:よ:Good|悪:わる:Bad,Evil|若:わか:Young|老:お:Old (people),Age|美:うつく:Beautiful|偉:えら:Great,Admirable|派:は:Faction,Group,Sect|柔:やわ:Soft,Flexible|軟:やわ:Soft (touch)",
-    5: "行:い:Go,Act|帰:かえ:Return,Go home|歩:ある:Walk|走:はし:Run|止:と:Stop|飛:と:Fly|泳:およ:Swim|動:うご:Move|働:はたら:Work|休:やす:Rest,Take a break|起:お:Wake up,Rise|寝:ね:Sleep,Lie down|座:すわ:Sit|立:た:Stand|乗:の:Ride,Get on|降:お:Descend,Get off,Fall|転:ころ:Roll,Turn over|洗:あら:Wash|泣:な:Cry|笑:わら:Laugh,Smile|押:お:Push|引:ひ:Pull|拾:ひろ:Pick up|捨:す:Throw away,Discard|触:さわ:Touch,Feel|抜:ぬ:Pull out,Extract|抱:だ:Embrace,Hold|浮:う:Float|沈:しず:Sink|渡:わた:Cross,Hand over|逃:に:Escape,Run away|追:お:Chase,Follow|越:こ:Cross over,Exceed|落:お:Fall,Drop|登:のぼ:Climb|踏:ふ:Step on,Tread|散:ち:Scatter,Disperse|集:あつ:Gather,Collect|並:なら:Line up,Average|列:れつ:Row,Line,Queue|移:うつ:Move,Shift,Transfer|向:む:Face,Toward,Direction|折:お:Fold,Break,Bend|刻:きざ:Engrave,Carve,Time|切:き:Cut|貼:は:Paste,Stick,Apply|入:はい:Enter,Insert|出:で:Exit,Put out,Leave|打:う:Hit,Strike|撃:う:Attack,Defeat",
-    6: "見:み:See,Look|聞:き:Hear,Listen,Ask|読:よ:Read|書:か:Write|話:はな:Speak,Talk|語:かた:Language,Word,Narrate|言:い:Say,Word|思:おも:Think,Feel|考:かんが:Consider,Think|知:し:Know|覚:おぼ:Remember,Awake,Memorize|忘:わす:Forget|決:き:Decide|信:しん:Believe,Trust,Message|疑:うたが:Doubt,Suspect|願:ねが:Wish,Request|頼:たの:Request,Rely on|呼:よ:Call|答:こた:Answer|説:せつ:Explain,Theory|記:き:Record,Write down|訳:わけ:Translate,Reason|伝:つた:Transmit,Convey|認:みと:Recognize,Acknowledge|識:しき:Consciousness,Knowledge|買:か:Buy|売:う:Sell|飲:の:Drink|食:た:Eat,Food|払:はら:Pay,Sweep away|貸:か:Lend|借:か:Borrow|返:かえ:Return|使:つか:Use|持:も:Hold,Have|取:と:Take|受:う:Receive,Undergo|給:きゅう:Provide,Wage,Salary|届:とど:Deliver,Reach|贈:おく:Gift,Present|迎:むか:Welcome,Meet,Greet|探:さが:Search,Look for|索:さく:Search,Cord|換:か:Exchange|構:かま:Construct,Mind|申:もう:Say (humble)|習:なら:Learn|科:か:Course,Subject,Department|算:さん:Calculate,Compute|告:つ:Announce,Tell",
-    7: "国:くに:Country,Nation|都:と:Metropolis,Capital|道:みち:Road,Path,Street|府:ふ:Prefecture,Agency|県:けん:Prefecture|市:し:City,Market|区:く:Ward,District|町:まち:Town|村:むら:Village|街:まち:Street,City quarter|駅:えき:Station|港:みなと:Port,Harbor|寺:てら:Temple (Buddhist)|社:しゃ:Company,Shrine (Shinto)|院:いん:Institution,Temple|堂:どう:Hall,Public building|店:みせ:Shop,Store|屋:や:Roof,House,Shop|室:しつ:Room|窓:まど:Window|階:かい:Floor,Story,Stair|戸:と:Door|門:もん:Gate|壁:かべ:Wall|庭:にわ:Garden,Yard|柱:はしら:Pillar,Post|宿:やど:Inn,Lodge,Lodging|宅:たく:House,Home,Residence|園:その:Park,Garden|場:ば:Place,Location|所:ところ:Place|館:かん:Building,Hall|建:たて:Build,Construct|築:きず:Fabricate,Build,Construct|宮:みや:Palace,Shinto shrine|邸:てい:Mansion,Residence|城:しろ:Castle|塔:とう:Tower,Pagoda|段:だん:Step,Grade,Rank|隅:すみ:Corner,Nook|側:がわ:Side|端:はし:Edge,End,Tip|底:そこ:Bottom|頂:いただき:Top,Summit|境:さかい:Boundary,Border,Situation|囲:かこ:Surround,Enclose|横:よこ:Side,Horizontal|逆:ぎゃく:Reverse,Opposite|辺:へん:Area,Vicinity,Border|地:ち:Ground,Earth,Land",
-    8: "家:いえ:House,Home,Family|具:ぐ:Tool,Utensil,Ingredient|箱:はこ:Box|袋:ふくろ:Bag,Sack|皿:さら:Plate,Dish|飯:めし:Meal,Cooked rice|菜:な:Vegetable,Side dish|席:せき:Seat|靴:くつ:Shoes|荷:に:Luggage,Baggage,Load|札:ふだ:Tag,Bill,Paper money|券:けん:Ticket|機:き:Machine,Opportunity|械:かい:Machine,Apparatus|器:うつわ:Vessel,Instrument,Container|紙:かみ:Paper|線:せん:Line|糸:いと:Thread|服:ふく:Clothes|着:き:Wear,Arrive|布:ぬの:Cloth|鏡:かがみ:Mirror|傘:かさ:Umbrella|本:ほん:Book,Origin,Main|棚:たな:Shelf|机:つくえ:Desk|湯:ゆ:Hot water|濯:たく:Wash,Laundry|沸:わ:Boil,Seethe|乾:かわ:Dry|掃:は:Sweep|肉:にく:Meat|茶:ちゃ:Tea|薬:くすり:Medicine|医:い:Medicine,Doctor|煙:けむり:Smoke|根:ね:Root|種:たね:Seed,Kind,Species|枝:えだ:Branch|桜:さくら:Cherry blossom|梅:うめ:Plum|森:もり:Forest|林:はやし:Woods,Grove|木:き:Tree,Wood|花:はな:Flower|草:くさ:Grass,Weed|葉:は:Leaf|生:なま:Life,Raw,Birth|咲:さ:Bloom|枯:か:Wither,Dry up",
-    9: "学:まな:Study,Learning|校:こう:School|教:おし:Teach,Religion|研:けん:Polish,Study|究:きゅう:Research,Investigate|試:ため:Test,Try|験:けん:Test,Examine|業:ぎょう:Business,Vocation,Industry|職:しょく:Employment,Job|務:つと:Task,Duties|経:へ:Manage,Pass through,Sutra|済:す:Finish,Settle,Economy|政:まつりごと:Politics,Government|治:なお:Govern,Cure|法:ほう:Law,Method|律:りつ:Law,Rhythm|際:さい:Occasion,International|係:かかり:Connection,Person in charge|団:だん:Group,Association|課:か:Section,Chapter,Lesson|役:やく:Duty,Role,Service|官:かん:Official,Government|警:けい:Guard,Warn,Police|署:しょ:Government office,Station|議:ぎ:Debate,Parliament|民:たみ:People,Nation|犯:おか:Crime,Commit|罪:つみ:Guilt,Sin,Crime|留:とど:Detain,Fasten,Halt|訪:おとず:Visit,Call on|招:まね:Invite|練:れん:Practice,Knead|慣:な:Accustomed,Habit|式:しき:Style,Ceremony,Formula|祭:まつり:Festival|祝:いわ:Celebrate,Congratulate|企:くわだ:Plan,Scheme,Enterprise|労:ろう:Labor,Toil|雇:やと:Employ,Hire|商:あきな:Commerce,Trade|貿:ぼう:Trade,Exchange|営:いとな:Manage,Conduct business|史:し:History|績:せき:Exploits,Achievements|価:あたい:Value,Price|争:あらそ:Contend,Dispute,Argue|戦:たたか:War,Battle|平:たいら:Flat,Peace|和:わ:Harmony,Peace|部:ぶ:Part,Section,Club,Department",
-    10: "理:り:Reason,Logic|意:い:Idea,Mind,Meaning|題:だい:Topic,Problem,Subject|味:あじ:Flavor,Taste,Meaning|用:よう:Use,Business,Errand|事:こと:Matter,Thing,Fact|物:もの:Thing,Object|品:しな:Goods,Article,Dignity|質:しつ:Quality,Matter|性:せい:Nature,Gender|的:てき:Target,ic|形:かたち:Shape,Form|状:じょう:Condition,Form,Letter|態:たい:Condition,State,Appearance|度:ど:Degree,Time,Occurrence|量:りょう:Quantity,Amount|測:はか:Measure,Fathom|規:き:Standard,Measure|則:そく:Rule,Law|差:さ:Difference,Margin|残:のこ:Remain,Leftover|額:ひたい:Amount,Forehead,Frame|税:ぜい:Tax|費:ひ:Expense,Cost|割:わり:Proportion,Divide,Cut|益:えき:Benefit,Profit|財:ざい:Property,Wealth,Finance|貧:まず:Poor,Poverty|富:とみ:Rich,Wealth|技:わざ:Skill,Art,Craft|能:のう:Ability,Talent,Skill|術:じゅつ:Art,Technique,Method|造:つく:Create,Make,Structure|設:もう:Establish,Setup|備:そな:Equip,Provision,Preparation|容:よう:Contain,Form,Looks|難:むずか:Difficult,Trouble,Hardship|普:ふ:Universal,General,Normal|雑:ざつ:Miscellaneous,Mixed,Rough|単:たん:Simple,Single|複:ふく:Duplicate,Multiple,Compound|全:まった:Whole,Entire,All|満:み:Full,Satisfy|欠:か:Lack,Gap,Defect|突:つ:Stab,Protruding,Thrust|偶:ぐう:Accidental,Even number|既:すで:Already,Previously|未:み:Not yet,Un|完:かん:Perfect,Completion,End|類:るい:Sort,Kind,Class",
-    11: "察:さつ:Guess,Presume,Judge|念:ねん:Thought,Idea,Desire|存:そん:Exist,Suppose,Be aware of|希:き:Hope,Beg,Rare|愛:あい:Love,Affection|憎:にく:Hate,Detest|恨:うら:Grudge,Resentment|録:ろく:Record,Transcript|述:の:State,Mention,Express|論:ろん:Theory,Argument,Discuss|評:ひょう:Evaluate,Criticism|判:はん:Judge,Decide,Stamp|導:みちび:Guide,Lead|示:しめ:Show,Indicate|表:おもて:Surface,Table,Express|現:あらわ:Present,Existing,Appear|象:ぞう:Elephant,Phenomenon,Image|敬:うやま:Respect,Honor|尊:とうと:Revere,Valuable,Noble|礼:れい:Manners,Bow,Gratitude|拝:おが:Worship,Adore,Pray|儀:ぎ:Ceremony,Rule,Affair|産:う:Produce,Give birth,Native|注:そそ:Pour,Note,Focus|特:とく:Special|台:だい:Stand,Pedestal,Machine counter|康:こう:Ease,Peace,Health|介:かい:Mediate,Help,Care|去:さ:Leave,Past,Quit|映:うつ:Reflect,Project|声:こえ:Voice|弓:ゆみ:Bow (archery)|婚:こん:Marriage|姓:せい:Surname|齢:れい:Age|殿:との:Hall,Mansion,Lord|紹:しょう:Introduce|暮:く:Livelihood,Evening|努:つと:Toil,Diligent,Effort|豊:ゆた:Bountiful,Plentiful,Rich|陽:よう:Sunshine,Yang,Positive|球:たま:Sphere,Ball|燃:も:Burn,Blaze|農:のう:Farming,Agriculture|震:ふる:Quake,Shake|災:わざわ:Disaster,Calamity|害:がい:Harm,Injury|燥:そう:Parched,Dry|吹:ふ:Blow,Breathe|液:えき:Fluid,Liquid",
-    12: "交:まじ:Mix,Intersect,Exchange|資:し:Assets,Resources,Capital|運:はこ:Carry,Transport,Luck|楽:たの:Music,Comfort,Fun|組:くみ:Assemble,Put together,Group|車:くるま:Car,Vehicle,Wheel|字:じ:Character,Letter,Word|病:やまい:Illness,Sickness|歌:うた:Song,Sing|局:きょく:Bureau,Office,Board|健:すこ:Healthy,Health|音:おと:Sound,Noise|旅:たび:Travel,Trip|勉:べん:Endeavor,Effort|善:よ:Good,Virtuous|療:りょう:Heal,Cure,Medical treatment|防:ふせ:Defend,Protect,Prevent|救:すく:Save,Rescue|護:ご:Safeguard,Protect|衛:えい:Defense,Protection|視:し:See,Look at,Vision|査:さ:Investigate,Inspect|検:けん:Examine,Inspect|証:しょう:Evidence,Proof,Certificate|可:か:Possible,Acceptable,Can|否:いな:No,Negate,Decline|定:さだ:Determine,Fix,Decide|断:ことわ:Cut off,Decide,Refuse|案:あん:Plan,Idea,Draft|件:けん:Matter,Case,Affair|条:じょう:Clause,Article|許:ゆる:Permit,Allow|置:お:Put,Place|標:ひょう:Mark,Sign,Target|志:こころざし:Intention,Will,Motive|参:まい:Participate,Visit|共:とも:Together,Both|協:きょう:Cooperation,Co|効:き:Effect,Efficacy,Merit|結:むす:Tie,Bind,Conclude|因:よ:Cause,Factor|由:よし:Reason,Origin|河:かわ:River|流:なが:Flow,Current|浴:あ:Bathe,Bask in|正:ただ:Correct,Right,Just|角:かど:Corner,Angle,Horn|丸:まる:Round,Circle,Whole|絵:え:Picture,Painting,Drawing|図:ず:Map,Diagram,Plan",
-    13: "各:おのおの:Each,Every|互:たが:Mutual,Reciprocal|絡:から:Entwine,Contact|似:に:Resemble,Similar|鳴:な:Chirp,Ring,Sound|飾:かざ:Decorate,Ornament|帯:おび:Belt,Sash,Zone|輪:わ:Ring,Wheel,Circle|湾:わん:Bay,Gulf|丘:おか:Hill|坂:さか:Slope,Hill|沼:ぬま:Swamp,Bog|池:いけ:Pond|田:た:Rice field|芝:しば:Lawn,Grass|句:く:Phrase,Haiku|詞:し:Word,Poetry|詩:し:Poem,Poetry|誌:し:Magazine,Document|筆:ふで:Brush,Writing|筒:つつ:Cylinder,Tube,Pipe|封:ふう:Seal,Enclose|籍:せき:Register,Enrollment|辞:や:Resign,Word,Dictionary|典:てん:Code,Ceremony,Reference|型:かた:Model,Type,Mold|版:はん:Edition,Printing block|刷:す:Print|刊:かん:Publish,Edition|創:つく:Create,Originate|製:せい:Manufacture,Make|写:うつ:Copy,Photograph|真:ま:True,Real|像:ぞう:Image,Statue,Figure|展:てん:Unfold,Exhibit,Expand|影:かげ:Shadow,Silhouette|響:ひび:Echo,Resound,Influence|劇:げき:Drama,Play|舞:まい:Dance|姿:すがた:Figure,Form,Appearance|勢:いきお:Force,Vigor,Energy|担:にな:Shoulder,Bear|任:まか:Responsibility,Entrust|退:しりぞ:Retire,Retreat,Withdraw|昇:のぼ:Rise,Ascend|就:つ:Settle in,Take position|販:はん:Sell,Marketing|購:こう:Purchase,Buy|値:ね:Price,Value|文:ぶん:Sentence,Text,Literature"
+    1: "一:いち:One@一日:いちにち:One day;一時:いちじ:One o'clock / temporary;一番:いちばん:Best / number one;一致:いっち:Agreement / match;一生:いっしょう:Whole life|二:に:Two@二月:にがつ:February;二人:ふたり:Two people;二十:にじゅう:Twenty;二度:にど:Twice / second time|三:さん:Three@三月:さんがつ:March;三人:さんにん:Three people;三角:さんかく:Triangle;三男:さんなん:Third son|四:よん:Four@四月:しがつ:April;四季:しき:Four seasons;四角:しかく:Square;四方:しほう:All four directions|五:ご:Five@五月:ごがつ:May;五十:ごじゅう:Fifty;五感:ごかん:Five senses;五輪:ごりん:Olympics|六:ろく:Six@六月:ろくがつ:June;六日:むいか:Sixth day;六角:ろっかく:Hexagon;六法:ろっぽう:Six basic law codes|七:なな:Seven@七月:しちがつ:July;七夕:たなばた:Star Festival;七日:なのか:Seventh day;七色:なないろ:Seven colors|八:はち:Eight@八月:はちがつ:August;八日:ようか:Eighth day;八方:はっぽう:All directions;八重:やえ:Multi-layered|九:きゅう:Nine@九月:くがつ:September;九日:ここのか:Ninth day;九州:きゅうしゅう:Kyushu;九分:くぶ:Nine tenths / almost|十:じゅう:Ten@十月:じゅうがつ:October;十分:じゅうぶん:Enough / sufficient;十全:じゅうぜん:Perfection;十日:とおか:Tenth day|百:ひゃく:Hundred@百貨:ひゃっか:Department goods;百科:ひゃっか:Encyclopedia;百年:ひゃくねん:Century / 100 years;百姓:ひゃくしょう:Farmer / peasant|千:せん:Thousand@千年:せんねん:Millennium / 1000 years;千円:せんえん:Thousand yen;千里:せんり:Long distance;千鳥:ちどり:Plover bird|万:まん:Ten thousand@万一:まんいち:Just in case;万全:ばんぜん:Thorough / perfection;万能:ばんのう:All-purpose;万歳:ばんざい:Hurrah / cheers|間:あいだ:Interval,Space,Between@時間:じかん:Time;人間:にんげん:Human being;仲間:なかま:Companion / friend;瞬間:しゅんかん:Moment / instant|円:えん:Yen,Circle@円高:えんだか:Strong yen;円滑:えんかつ:Smooth / harmonious;円周:えんしゅう:Circumference;円満:えんまん:Harmonious / peaceful|倍:ばい:Double,Times,Fold@倍率:ばいりつ:Magnification / ratio;倍増:ばいぞう:Double / twofold increase;何倍:なんばい:How many times;数倍:すうばい:Several times|半:はん:Half@半分:はんぶん:Half;半島:はんとう:Peninsula;半径:はんけい:Radius;半端:はんぱ:Incomplete / remnant|毎:まい:Every@毎日:まいにち:Every day;毎週:まいしゅう:Every week;毎年:まいとし:Every year;毎朝:まいあさ:Every morning|今:いま:Now@今日:きょう:Today;今夜:こんや:Tonight;今後:こんご:From now on;今回:こんかい:This time|先:さき:Before,Ahead,Future@先生:せんせい:Teacher;先輩:せんぱい:Senior peer;先週:せんしゅう:Last week;先月:せんげつ:Last month|来:らい:Come,Next@来週:らいしゅう:Next week;来年:らいねん:Next year;未来:みらい:Future;来日:らいにち:Visit to Japan|昔:むかし:Long ago,Past@昔話:むかしばなし:Old tale / folklore;大昔:おおむかし:Ancient times;今昔:こんじゃく:Past and present;昔日:せきじつ:Old days|次:つぎ:Next@次回:じかい:Next time;次男:じなん:Second son;次第:しだい:Depending on / as soon as;目次:もくじ:Table of contents|何:なに:What@何時:なんじ:What time;何度:なんど:How many times;何人:なんにん:How many people;何故:なぜ:Why|日:にち:Day,Sun@日記:にっき:Diary;休日:きゅうじつ:Holiday;日光:にっこう:Sunlight;日本:にほん:Japan|月:つき:Month,Moon@月末:げつまつ:End of the month;今月:こんげつ:This month;満月:まんげつ:Full moon;月給:げっきゅう:Monthly salary|火:ひ:Fire@火事:かじ:Fire / conflagration;火山:かざん:Volcano;火花:ひばな:Spark;火気:かき:Fire / flame|水:みず:Water@水道:すいどう:Water service / supply;水泳:すいえい:Swimming;水面:すいめん:Water surface;水着:みずぎ:Swimsuit|点:てん:Point,Dot,Score@欠点:けってん:Defect / flaw;得点:とくてん:Score / points;重点:じゅうてん:Emphasis / priority;要点:ようてん:Main point|金:きん:Gold,Money,Friday@料金:りょうきん:Fee / charge;現金:げんきん:Cash;借金:しゃっきん:Debt / loan;金額:きんがく:Amount of money|土:つち:Earth,Soil,Saturday@土地:とち:Land / plot;土砂:どしゃ:Earth and sand;土台:どだい:Foundation / base;土木:どぼく:Civil engineering|年:とし:Year@年末:ねんまつ:End of year;年齢:ねんれい:Age;青年:せいねん:Youth;去年:きょねん:Last year|週:しゅう:Week@週末:しゅうまつ:Weekend;週間:しゅうかん:Week / weekly;隔週:かくしゅう:Every other week;週給:しゅうきゅう:Weekly pay|時:じ:Time,Hour@時間:じかん:Time / hours;時計:とけい:Clock / watch;時代:じだい:Era / age;同時:どうじ:Simultaneous|分:ふん:Minute,Part,Understand@自分:じぶん:Oneself;気分:きぶん:Mood / feeling;部分:ぶぶん:Part / section;分野:ぶんや:Field / realm|秒:びょう:Second (time)@秒針:びょうしん:Second hand;毎秒:まいびょう:Every second;秒速:びょうそく:Speed per second;毎秒:まいびょう:Every second|曜:よう:Day of the week@曜日:ようび:Day of the week;火曜:かよう:Tuesday;水曜:すいよう:Wednesday;木曜:もくよう:Thursday|朝:あさ:Morning@朝食:ちょうしょく:Breakfast;朝晩:あさばん:Morning and evening;朝日:あさひ:Morning sun;今朝:けさ:This morning|昼:ひる:Noon,Daytime@昼食:ちゅうしょく:Lunch;昼寝:ひるね:Nap;昼間:ひるま:Daytime;昼夜:ちゅうや:Day and night|夜:よる:Night@夜間:やかん:Nighttime;夜景:やけい:Night view;今夜:こんや:Tonight;深夜:しんや:Late night|晩:ばん:Evening,Night@今晩:こんばん:Tonight;毎晩:まいばん:Every night;晩飯:ばんめし:Supper / dinner;晩年:ばんねん:Later years|夕:ゆう:Evening@夕方:ゆうがた:Evening;夕日:ゆうひ:Setting sun;夕食:ゆうしょく:Dinner / supper;一夕:いっせき:One evening|春:はる:Spring@春夏:しゅんか:Spring and summer;青春:せいしゅん:Youth / adolescence;新春:しんしゅん:New Year / spring;春分:しゅんぶん:Vernal equinox|夏:なつ:Summer@夏季:かき:Summer season;初夏:しょか:Early summer;真夏:まなつ:Midsummer;夏期:かき:Summer period|秋:あき:Autumn,Fall@秋分:しゅうぶん:Autumnal equinox;秋晴:あきばれ:Clear autumn weather;初秋:しょしゅう:Early autumn;晩秋:ばんしゅう:Late autumn|冬:ふゆ:Winter@冬季:とうき:Winter season;冬眠:とうみん:Hibernation;初冬:しょとう:Early winter;真冬:まふゆ:Midwinter|季:き:Season@季節:きせつ:Season;四季:しき:Four seasons;季語:きご:Seasonal word;雨季:うき:Rainy season|節:せつ:Season,Joint,Node@節約:せつやく:Saving / economizing;調節:ちょうせつ:Adjustment;礼節:れいせつ:Etiquette / courtesy;節度:せつど:Moderation|期:き:Period,Time,Term@期間:きかん:Period / term;時期:じき:Time / season;期待:きたい:Expectation;学期:がっき:School semester|始:はじ:Begin,Start@開始:かいし:Start / commencement;始発:しはつ:First train / departure;終始:しゅうし:Beginning to end;始末:しまつ:Management / settlement",
+    2: "天:てん:Heaven,Sky@天気:てんき:Weather;天国:てんごく:Heaven / paradise;天井:てんじょう:Ceiling;天才:てんさい:Genius / prodigy|気:き:Spirit,Mind,Atmosphere,Mood@気分:きぶん:Mood / feeling;気圧:きあつ:Atmospheric pressure;元気:げんき:Healthy / energetic;人気:にんき:Popularity|空:そら:Sky,Empty@青空:あおぞら:Blue sky;空気:くうき:Air / atmosphere;空港:くうこう:Airport;空間:くうかん:Space / room|晴:はれ:Clear weather,Sunny@晴天:せいてん:Fine weather;晴雨:せいう:Clear or rainy weather;秋晴:あきばれ:Clear autumn weather;見晴:みはらし:View / outlook|曇:くもり:Cloudy weather@曇天:どんてん:Cloudy sky / overcast;曇夜:どんや:Cloudy night;雪曇:ゆきぐもり:Snow clouds;花曇:はなぐもり:Cloudy spring day|雨:あめ:Rain@雨天:うてん:Rainy weather;大雨:おおあめ:Heavy rain;雨量:うりょう:Rainfall amount;梅雨:つゆ:Rainy season|雪:ゆき:Snow@雪山:ゆきやま:Snowy mountain;大雪:おおゆき:Heavy snow;降雪:こうせつ:Snowfall;新雪:しんせつ:Fresh snow|風:かぜ:Wind@台風:たいふう:Typhoon;風速:ふうそく:Wind speed;強風:きょうふう:Strong wind;風景:ふうけい:Scenery / landscape|雲:くも:Cloud@雨雲:あまぐも:Rain cloud;雲海:うんかい:Sea of clouds;白雲:はくうん:White cloud;暗雲:あんうん:Dark clouds|雷:かみなり:Thunder,Lightning@雷雨:らいう:Thunderstorm;落雷:らくらい:Lightning strike;雷鳴:らいめい:Thunder peal;地雷:じらい:Landmine|温:あたた:Warm (things/temp)@温度:おんど:Temperature;温泉:おんせん:Hot spring;気温:きおん:Air temperature;温暖:おんだん:Warm / mild climate|暖:あたた:Warm (weather/climate)@暖房:だんぼう:Heating;温暖:おんだん:Warm climate;暖冬:だんとう:Mild winter;寒暖:かんだん:Heat and cold|涼:すず:Cool,Refreshing@清涼:せいりょう:Refreshing / cool;涼風:りょうふう:Cool breeze;夕涼:ゆうすずみ:Cool of the evening;涼気:りょうき:Cool air|寒:さむ:Cold (weather)@寒波:かんぱ:Cold wave;寒気:さむけ:Chill / cold air;防寒:ぼうかん:Cold protection;極寒:ごっかん:Extreme cold|暑:あつ:Hot (weather)@猛暑:もうしょ:Fierce heat;避暑:ひしょ:Summer vacation / escaping heat;暑中:しょちゅう:Midsummer;残暑:ざんしょ:Late summer heat|熱:あつ:Heat,Hot (things),Fever@熱心:ねっしん:Enthusiastic;高熱:こうねつ:High fever;熱帯:ねったい:Tropics;加熱:かねつ:Heating|氷:こおり:Ice@氷山:ひょうざん:Iceberg;氷点:ひょうてん:Freezing point;結氷:けっぴょう:Freezing over;解氷:かいひょう:Thawing / melting ice|炭:すみ:Charcoal,Coal@石炭:せきたん:Coal;木炭:もくたん:Charcoal;炭素:たんそ:Carbon;炭酸:たんさん:Carbonic acid|石:いし:Stone,Rock@石油:せきゆ:Petroleum / oil;化石:かせき:Fossil;宝石:ほうせき:Jewel / gem;磁石:じしゃく:Magnet|光:ひかり:Light,Ray@日光:にっこう:Sunlight;観光:かんこう:Sightseeing;光線:こうせん:Beam of light;栄光:えいこう:Glory|星:ほし:Star@星座:せいざ:Constellation;火星:かせい:Mars;衛星:えいせい:Satellite;惑星:わくせい:Planet|山:やま:Mountain@火山:かざん:Volcano;山頂:さんちょう:Summit / mountaintop;登山:とざん:Mountain climbing;山林:さんりん:Mountain forest|川:かわ:River@小川:おがわ:Stream / brook;河川:かせん:Rivers;川辺:かわべ:Riverside;川口:かわぐち:Mouth of a river|海:うみ:Sea,Ocean@海外:かいがい:Overseas / abroad;海岸:かいがん:Coast / seashore;海洋:かいよう:Ocean / sea;海水:かいすい:Seawater|島:しま:Island@列島:れっとう:Archipelago;島国:しまぐに:Island country;孤島:ことう:Solitary island;半島:はんとう:Peninsula|湖:みずうみ:Lake@湖畔:こはん:Lakeside;湖面:こめん:Lake surface;塩湖:えんこ:Salt lake;湖水:こすい:Lake water|岸:きし:Shore,Bank,Coast@海岸:かいがん:Seashore / beach;対岸:たいがん:Opposite shore;湾岸:わんがん:Bay coast;沿岸:えんがん:Coast / shore|岩:いわ:Rock,Boulder,Crag@岩石:がんせき:Rock / stone;溶岩:ようがん:Lava;岩山:いわやま:Rocky mountain;岩盤:がんばん:Bedrock|砂:すな:Sand@砂漠:さばく:Desert;砂利:じゃり:Gravel;土砂:どしゃ:Earth and sand / sediment;砂浜:すなはま:Sandy beach|泉:いずみ:Spring,Fountain@温泉:おんせん:Hot spring;源泉:げんせん:Source / springhead;鉱泉:こうせん:Mineral spring;清泉:せいせん:Clear spring|滝:たき:Waterfall@滝壺:たきつぼ:Waterfall basin;飛滝:ひろう:Cascading waterfall;名滝:めいたき:Famous waterfall;滝口:たきぐち:Top of waterfall|谷:たに:Valley@渓谷:けいこく:Ravine / canyon;谷底:たにぞこ:Bottom of a ravine;山谷:さんこく:Mountains and valleys;峡谷:きょうこく:Gorge / canyon|原:はら:Field,Meadow,Original@原因:げんいん:Cause / factor;高原:こうげん:Highland / plateau;原料:げんりょう:Raw material;原点:げんてん:Origin / starting point|鉱:こう:Mineral,Ore@鉱物:こうぶつ:Mineral;鉱山:こうざん:Mine;鉱石:こうせき:Ore;炭鉱:たんこう:Coal mine|鉄:てつ:Iron@鉄道:てつどう:Railroad / railway;鉄分:てつぶん:Iron content;鉄橋:てっきょう:Railway bridge;鋼鉄:こうてつ:Steel|油:あぶら:Oil@石油:せきゆ:Petroleum / oil;油田:ゆでん:Oil field;原油:げんゆ:Crude oil;醤油:しょうゆ:Soy sauce|波:なみ:Wave@津波:つなみ:Tsunami / tidal wave;波及:はきゅう:Spread / ripple effect;電波:でんぱ:Radio waves;短波:たんぱ:Short wave|陸:りく:Land,Shore@大陸:たいりく:Continent;着陸:ちゃくりく:Landing;陸上:りくじょう:On land / track and field;上陸:じょうりく:Landing / coming ashore|上:うえ:Up,Above,Over@上手:じょうず:Skillful / good at;以上:いじょう:More than / that's all;上昇:じょうしょう:Rise / ascent;屋上:おくじょう:Rooftop|下:した:Down,Below,Under@下手:へた:Unskillful / poor at;地下:ちか:Underground;以下:いか:Less than / below;低下:ていか:Decline / fall|左:ひだり:Left@左右:さゆう:Left and right / influence;左側:ひだりがわ:Left side;左折:させつ:Left turn;左手:ひだりて:Left hand|右:みぎ:Right@右手:みぎて:Right hand;右側:みぎがわ:Right side;右折:うせつ:Right turn;右翼:うよく:Right wing|中:なか:Middle,Inside,Center@中心:ちゅうしん:Center / core;集中:しゅうちゅう:Concentration;年中:ねんじゅう:All year round;中止:ちゅうし:Suspension / cancellation|外:そと:Outside,Outer@外国:がいこく:Foreign country;以外:いがい:Except / other than;外出:がいしゅつ:Going out;郊外:こうがい:Suburbs|広:ひろ:Wide,Broad,Spacious@広大:こうだい:Vast / extensive;広告:こうこく:Advertisement;広場:ひろば:Plaza / public square;広報:こうほう:Public relations|狭:せま:Narrow,Cramped@狭小:きょうしょう:Narrow and small;狭義:きょうぎ:Narrow sense;狭路:きょうろ:Narrow path;手狭:てぜま:Cramped / narrow|高:たか:High,Tall,Expensive@高校:こうこう:High school;高度:こうど:Altitude / advanced;最高:さいこう:Highest / best;高級:こうきゅう:High class / deluxe|低:ひく:Low@低下:ていか:Decline / drop;低地:ていち:Lowland;最低:さいてい:Lowest / worst;低温:ていおん:Low temperature|深:ふか:Deep@深夜:しんや:Late at night;深刻:しんこく:Serious / grave;深海:しんかい:Deep sea;深度:しんど:Depth|浅:あさ:Shallow@浅瀬:あさせ:Shallows / shoal;浅薄:せんぱく:Shallow / superficial;遠浅:とおあさ:Shallow for a long distance;浅見:せんけん:Shallow view",
+    3: "男:おとこ:Man,Male@男子:だんし:Boy / male;男性:だんせい:Man / male gender;長男:ちょうなん:Eldest son;長男:ちょうなん:First-born son;男優:だんゆう:Actor|女:おんな:Woman,Female@女子:じょし:Girl / female;女性:じょせい:Woman / female gender;長女:ちょうじょ:Eldest daughter;女優:じょゆう:Actress|子:こ:Child@子供:こども:Child / children;様子:ようす:State / appearance;息子:むすこ:Son;菓子:かし:Sweets / confectionery|父:ちち:Father@父親:ちちおや:Father;父母:ふぼ:Parents / father and mother;祖父:そふ:Grandfather;伯父:おじ:Uncle|母:はは:Mother@母親:ははおや:Mother;祖母:そぼ:Grandmother;母国:ぼこく:Mother country / homeland;母校:ぼこう:Alma mater|兄:あに:Older brother@兄弟:きょうだい:Brothers / siblings;実兄:じっけい:Biological older brother;父兄:ふけい:Parents and guardians;義兄:ぎけい:Brother-in-law|弟:おとうと:Younger brother@弟子:でし:Pupil / apprentice;子弟:してい:Children / younger people;義弟:ぎてい:Younger brother-in-law;兄弟:きょうだい:Siblings / brothers|姉:あね:Older sister@姉妹:しまい:Sisters;実姉:じっし:Biological older sister;義姉:ぎし:Sister-in-law;諸姉:しょし:Ladies / sisters|妹:いもうと:Younger sister@姉妹:しまい:Sisters;義妹:ぎまい:Younger sister-in-law;実妹:じつまい:Biological younger sister;令妹:れいまい:Your younger sister (polite)|親:おや:Parent,Intimacy,Relative@両親:りょうしん:Parents;親切:しんせつ:Kind / friendly;親友:しんゆう:Close friend / best friend;父親:ちちおや:Father|族:ぞく:Family,Tribe@家族:かぞく:Family;民族:みんぞく:Ethnic group / race;親族:しんぞく:Relatives;貴族:きぞく:Noble / aristocracy|夫:おっと:Husband@夫婦:ふうふ:Married couple;丈夫:じょうぶ:Durable / healthy;工夫:くふう:Devising / scheme;夫人:ふじん:Madam / Mrs.|妻:つま:Wife@妻帯:さいたい:Being married;妻子:さいし:Wife and children;愛妻:あいさい:Beloved wife;夫妻:ふさい:Mr. and Mrs. / couple|娘:むすめ:Daughter,Girl@長娘:ちょうむすめ:Eldest daughter;愛娘:まなむすめ:Beloved daughter;小娘:こむすめ:Young girl;娘子:じょうし:Young maiden|祖:そ:Ancestor,Grandparent@祖父:そふ:Grandfather;祖母:そぼ:Grandmother;祖先:そせん:Ancestor;祖国:そこく:Motherland / fatherland|友:とも:Friend@友達:ともだち:Friend;友人:ゆうじん:Friend (formal);親友:しんゆう:Best friend;友情:ゆうじょう:Friendship|人:ひと:Person@人間:にんげん:Human being;個人:こじん:Individual / private;人気:にんき:Popularity;人口:じんこう:Population|私:わたし:I,Me,Private@私立:しりつ:Private (institution);私服:しふく:Plain clothes;私有:しゆう:Private ownership;私用:しよう:Personal business|者:もの:Person (formal)@学者:がくしゃ:Scholar;医者:いしゃ:Doctor;読者:どくしゃ:Reader;若者:わかもの:Young person|員:いん:Member,Employee@全員:ぜんいん:All members / everyone;社員:しゃいん:Company employee;店員:てんいん:Shop clerk;役員:やくいん:Executive / director|徒:と:Follower,Pupil,Walking@生徒:せいと:Student / pupil;使徒:しと:Apostle / disciple;徒歩:とほ:Walking / on foot;使徒:しと:Apostle / disciple;教徒:きょうと:Believer / follower|客:きゃく:Guest,Customer@客席:きゃくせき:Audience seats;乗客:じょうきゃく:Passenger;客間:きゃくま:Guest room / parlor;来客:らいきゃく:Visitor / guest;客観:きゃっかん:Objective perspective|婦:ふ:Lady,Woman,Wife@婦人:ふじん:Woman / lady;主婦:しゅふ:Housewife;夫婦:ふうふ:Married couple;産婦:さんぷ:Maternity / woman giving birth|供:とも:Companion,Offer@子供:こども:Child;提供:ていきょう:Offer / providing;供給:きょうきゅう:Supply / provision;供述:きょうじゅつ:Deposition / statement|達:たち:Plural marker,Accomplish@達成:たっせい:Achievement / accomplishment;発達:はったつ:Development / growth;配達:はいたつ:Delivery;上達:じょうたつ:Improvement / progress|君:きみ:You,Buddy,Suffix for males@君主:くんしゅ:Monarch / sovereign;諸君:しょくん:Gentlemen / everyone;暴君:ぼうくん:Tyrant;君臨:くんりん:Reign / rule|力:ちから:Power,Strength,Force@努力:どりょく:Effort / endeavor;能力:のうりょく:Ability / capability;体力:たいりょく:Physical strength;全力:ぜんりょく:Full power / all out|名:な:Name,Reputation@名前:なまえ:Name;有名:ゆうめい:Famous;名所:めいしょ:Famous place;名誉:めいよ:Honor / prestige|目:め:Eye,Item@目的:もくてき:Purpose / goal;目次:もくじ:Table of contents;注目:ちゅうもく:Attention / notice;科目:かもく:School subject|耳:みみ:Ear@耳目:じもく:Attention / notice;耳鳴:みみな:Tinnitus / ringing in ears;早耳:はやみみ:Sharp-eared / quick to hear;初耳:はつみみ:Heard for first time;内耳:ないじ:Inner ear|口:くち:Mouth@人口:じんこう:Population;入口:いりぐち:Entrance;出口:でぐち:Exit;窓口:まどぐち:Counter window / contact|手:て:Hand@上手:じょうず:Skillful / good at;下手:へた:Unskillful / poor at;手段:しゅだん:Means / measure;歌手:かしゅ:Singer|足:あし:Foot,Leg,Sufficient@不足:ふそく:Shortage / lack;満足:まんぞく:Satisfaction;遠足:えんそく:Excursion / outing;足場:あしば:Scaffolding / foothold|頭:あたま:Head@頭痛:ずつう:Headache;先頭:せんとう:Lead / head;口頭:こうとう:Oral / spoken;頭部:とうぶ:Head area|顔:かお:Face@笑顔:えがお:Smiling face;洗顔:せんがん:Face washing;顔色:かおいろ:Complexion / expression;横顔:よこがお:Profile / side face|首:くび:Neck@首都:しゅと:Capital city;首脳:しゅのう:Leader / top executive;手首:てくび:Wrist;首相:しゅしょう:Prime Minister|肩:かた:Shoulder@肩幅:かたはば:Shoulder width;肩書:かたがき:Job title / credential;双肩:そうけん:Both shoulders;肩甲:けんこう:Scapula / shoulder blade|鼻:はな:Nose@鼻水:はなみず:Runny nose;鼻血:はなぢ:Nosebleed;耳鼻:じび:Ear and nose;高鼻:たかはな:High nose|歯:は:Tooth@歯科:しか:Dentistry;歯車:はぐるま:Gear / cogwheel;虫歯:むしば:Cavity / decayed tooth;義歯:ぎし:Dentures / false teeth|指:ゆび:Finger,Point@指示:しじ:Instruction / order;指名:しめい:Nomination / designation;指定:してい:Designation / specification;指導:しどう:Guidance / coaching|髪:かみ:Hair@毛髪:もうはつ:Hair (head);金髪:きんぱつ:Blonde hair;白髪:しらが:Grey / white hair;短髪:たんぱつ:Short hair|胸:むね:Chest,Breast@胸部:きょうぶ:Chest area / thorax;胸囲:きょうい:Chest measurement;胸中:きょうちゅう:In one's heart / mind;胸騒:むなさわ:Unease / premonition|腹:はら:Abdomen,Belly@腹痛:ふくつう:Abdominal pain / stomachache;空腹:くうふく:Empty stomach / hunger;満腹:まんぷく:Full stomach;腹部:ふくぶ:Abdomen area|背:せ:Back,Stature@背景:はいけい:Background / backdrop;背骨:せぼね:Backbone / spine;背面:はいめん:Back / rear face;背中:せなか:Back (of body)|骨:ほね:Bone@骨折:こっせつ:Bone fracture;骨組:ほねぐみ:Framework / skeleton;頭骨:とうこつ:Skull;骨子:こっし:Key points / framework|血:ち:Blood@血液:けつえき:Blood;血管:けっかん:Blood vessel;血圧:けつあつ:Blood pressure;出血:しゅっけつ:Bleeding / hemorrhage|心:こころ:Heart,Mind,Spirit@心配:しんぱい:Worry / concern;安心:あんしん:Peace of mind / relief;中心:ちゅうしん:Center / core;感心:かんしん:Admiration|命:いのち:Life,Fate,Destiny@命令:めいれい:Order / command;生命:せいめい:Life / existence;運命:うんめい:Fate / destiny;寿命:じゅみょう:Lifespan|身:み:Body,Oneself,Social position@自身:じしん:Self / personally;出身:しゅっしん:Hometown / origin;身長:しんちょう:Body height;身体:しんたい:Body / physical system|体:からだ:Body,Form@体重:たいじゅう:Body weight;体力:たいりょく:Physical strength;全体:ぜんたい:Whole / entirety;体験:たいけん:Personal experience",
+    4: "鳥:とり:Bird@小鳥:ことり:Small bird;野鳥:やちょう:Wild bird;白鳥:はくちょう:Swan;鳥居:とりい:Shinto shrine gate|魚:さかな:Fish@金魚:きんぎょ:Goldfish;魚類:ぎょるい:Fishes;鮮魚:せんぎょ:Fresh fish;魚屋:さかなや:Fishmonger|犬:いぬ:Dog@子犬:こいぬ:Puppy;番犬:ばんけん:Watchdog;猛犬:もうけん:Fierce dog;愛犬:あいけん:Pet dog|猫:ねこ:Cat@子猫:こねこ:Kitten;愛猫:あいびょう:Pet cat;猫舌:ねこじた:Sensitivity to hot food;黒猫:くろねこ:Black cat|牛:うし:Cow,Cattle@牛乳:ぎゅうにゅう:Cow's milk;牛肉:ぎゅうにく:Beef;和牛:わぎゅう:Wagyu / Japanese beef;牛舎:ぎゅうしゃ:Cattle barn|馬:うま:Horse@乗馬:じょうば:Horse riding;競馬:けいば:Horse racing;馬車:ばしゃ:Horse-drawn carriage;白馬:はくば:White horse|虫:むし:Insect,Bug@昆虫:こんちゅう:Insect / bug;害虫:がいちゅう:Harmful insect / pest;虫歯:むしば:Cavity / decayed tooth;防虫:ぼうちゅう:Insect repellent|羊:ひつじ:Sheep@羊毛:ようもう:Wool;子羊:こひつじ:Lamb;羊肉:ようにく:Mutton / lamb meat;群羊:ぐんよう:Flock of sheep|豚:ぶた:Pig,Pork@豚肉:ぶたにく:Pork;養豚:ようとん:Pig farming;子豚:こぶた:Piglet;豚舎:とんしゃ:Pigsty / pigpen|鶏:にわとり:Chicken@養鶏:ようけい:Poultry farming;鶏卵:けいらん:Hen's egg;鶏肉:けいにく:Chicken meat;軍鶏:しゃも:Gamecock|獣:けもの:Beast,Animal@野獣:やじゅう:Wild beast;猛獣:もうじゅう:Fierce beast;獣医:じゅうい:Veterinarian;怪獣:かいじゅう:Monster|毛:け:Hair,Fur,Wool@毛皮:けがわ:Fur / pelt;毛布:もうふ:Blanket;眉毛:まゆげ:Eyebrows;羽毛:うもう:Feather / down|白:しろ:White@白黒:しろくろ:Black and white;空白:くうはく:Blank / space;白鳥:はくちょう:Swan;明白:めいはく:Obvious / clear|赤:あか:Red@赤字:あかじ:Deficit / in the red;赤道:せきどう:Equator;赤外:せきがい:Infrared;真赤:まっか:Deep red|青:あお:Blue,Green@青空:あおぞら:Blue sky;青年:せいねん:Youth / young man;青春:せいしゅん:Youth / adolescence;青葉:あおば:Fresh green leaves|黒:くろ:Black@黒板:こくばん:Blackboard;白黒:しろくろ:Black and white;暗黒:あんこく:Darkness / dark;黒字:くろじ:Surplus / in the black|黄:き:Yellow@黄色:きいろ:Yellow;黄河:こうが:Yellow River;黄金:おうごん:Gold;卵黄:らんおう:Egg yolk|色:いろ:Color@特色:とくしょく:Characteristic / feature;景色:けしき:Scenery / view;色彩:しきさい:Color / hue;気色:きしょく:Mood / expression|暗:くら:Dark@暗記:あんき:Memorization;暗黒:あんこく:Darkness;明暗:めいあん:Light and dark;暗号:あんごう:Code / cipher|明:あか:Bright,Clear@説明:せつめい:Explanation;明日:あした:Tomorrow;文明:ぶんめい:Civilization;明確:めいかく:Clear / distinct|新:あたら:New@新聞:しんぶん:Newspaper;新鮮:しんせん:Fresh;新年:しんねん:New Year;最新:さいしん:Latest / newest|古:ふる:Old (things)@古代:こだい:Ancient times;中古:ちゅうこ:Secondhand / used;古典:こてん:Classic / classics;考古:こうこ:Archaeology|多:おお:Many,Much@多数:たすう:Great number / majority;多分:たぶん:Probably / perhaps;多額:たがく:Large sum;多忙:たぼう:Very busy|少:すく:Few,Little@少数:しょうすう:Minority / few;少年:しょうねん:Boy / youth;少女:しょうじょ:Girl / maiden;多少:たしょう:More or less / somewhat|安:やす:Cheap,Safe,Peaceful@安心:あんしん:Peace of mind / relief;安全:あんぜん:Safety / security;不安:ふあん:Anxiety / uneasiness;安定:あんてい:Stability|重:おも:Heavy,Important@重要:じゅうよう:Important;体重:たいじゅう:Body weight;尊重:そんちょう:Respect / esteem;重力:じゅうりょく:Gravity|軽:かる:Light (weight)@軽食:けいしょく:Light meal / snack;軽視:けいし:Making light of / neglect;軽快:けいかい:Light / nimble;軽微:けいび:Slight / negligible|痛:いた:Pain,Hurt@頭痛:ずつう:Headache;苦痛:くつう:Pain / suffering;腹痛:ふくつう:Stomachache;激痛:げきつう:Severe pain / agony|苦:くる:Bitter,Suffering,Hardship@苦情:くじょう:Complaint;苦手:にがて:Poor at / weak point;苦労:くろう:Hardship / trouble;苦心:くしん:Pains / hard effort|悲:かな:Sad@悲鳴:ひめい:Scream / shriek;悲劇:ひげき:Tragedy;悲哀:ひあい:Sorrow / grief;悲願:ひがん:Ardent wish|喜:よろこ:Rejoice,Glad@歓喜:かんき:Joy / delight;狂喜:きょうき:Wild joy / ecstasy;喜劇:きげき:Comedy;大喜:たいき:Great joy|怒:おこ:Angry@激怒:げきど:Rage / fury;怒気:どき:Anger / wrath;怒号:どごう:Angry roar;喜怒:きど:Joy and anger|恥:はじ:Shame,Embarrassment@恥辱:ちじょく:Disgrace / humiliation;無恥:むち:Shameless;羞恥:しゅうち:Shyness / shame;恥部:ちぶ:Private parts / shame|弱:よわ:Weak@弱点:じゃくてん:Weak point;弱小:じゃくしょう:Small and weak;強弱:きょうじゃく:Strength and weakness;衰弱:すいじゃく:Weakness / debility|強:つよ:Strong@強力:きょうりょく:Powerful / strong;強調:きょうちょう:Emphasis / stress;強引:ごういん:Forcible / pushy;勉強:べんきょう:Study|忙:いそが:Busy@多忙:たぼう:Very busy;繁忙:はんぼう:Busy / hectic;忙殺:ぼうさつ:Being extremely busy;公忙:こうぼう:Busy with official duties|暇:ひま:Free time,Leisure@休暇:きゅうか:Holiday / vacation;余暇:よか:Leisure / spare time;閑暇:かんか:Leisure / spare time;暇乞:いとまごい:Bidding farewell|早:はや:Early,Fast@早速:さっそく:At once / immediately;早朝:そうちょう:Early morning;早退:そうたい:Leaving early;早期:そうき:Early stage|遅:おそ:Late,Slow@遅刻:ちこく:Tardiness / being late;遅延:ちえん:Delay;遅速:ちそく:Speed / fast or slow;遅滞:ちたい:Delay / stagnation|遠:とお:Far,Distant@遠足:えんそく:Excursion / picnic;遠慮:えんりょ:Hesitation / restraint;遠方:えんぽう:Distant place;望遠:ぼうえん:Telescopic|近:ちか:Near,Close@近所:きんじょ:Neighborhood;最近:さいきん:Recently / lately;近海:きんかい:Coastal waters;接近:せっきん:Approach / getting close|良:よ:Good@改良:かいりょう:Improvement;良好:りょうこう:Favorable / good;善良:ぜんりょう:Good / virtuous;良心:りょうしん:Conscience|悪:わる:Bad,Evil@最悪:さいあく:Worst;悪化:あっか:Deterioration / worsening;悪口:わるくち:Bad-mouthing / slander;善悪:ぜんあく:Good and evil|若:わか:Young@若者:わかもの:Young person / youth;若年:じゃくねん:Youth / young age;若気:わかげ:Youthful spirit;老若:ろうにゃく:Old and young|老:お:Old (people),Age@老人:ろうじん:Elderly person;敬老:けいろう:Respect for the aged;老年:ろうねん:Old age;老衰:ろうすい:Senility|美:うつく:Beautiful@美術:びじゅつ:Fine arts;美人:びじん:Beautiful woman;美容:びよう:Beauty care;賛美:さんび:Praise / adoration|偉:えら:Great,Admirable@偉大:いだい:Great / grand;偉人:いじん:Great person;偉力:いりょく:Great power;偉業:いぎょう:Great achievement|派:は:Faction,Group,Sect@立派:りっぱ:Splendid / fine;派遣:はけん:Dispatch / dispatching;宗派:しゅうは:Religious sect;党派:とうは:Political faction|柔:やわ:Soft,Flexible@柔道:じゅうどう:Judo;柔軟:じゅうなん:Flexible / pliable;柔和:にゅうわ:Gentle / meek;優柔:ゆうじゅう:Indecisive|軟:やわ:Soft (touch)@軟弱:なんじゃく:Weak / effeminate;柔軟:じゅうなん:Flexible / pliable;軟化:なんか:Softening;軟派:なんぱ:Flirting / playboy",
+    5: "行:い:Go,Act@行動:こうどう:Action / behavior;旅行:りょこう:Travel / trip;銀行:ぎんこう:Bank;進行:しんこう:Progress / advance|帰:かえ:Return,Go home@帰国:きこく:Return to one's country;帰宅:きたく:Returning home;復帰:ふっき:Return / comeback;帰還:きかん:Return / repatriation|歩:ある:Walk@散歩:さんぽ:Walk / stroll;進歩:しんぽ:Progress / advance;徒歩:とほ:Walking / on foot;歩道:ほどう:Sidewalk / footpath|走:はし:Run@走行:そうこう:Running / traveling;競走:きょうそう:Race;逃走:とうそう:Flight / escape;暴走:ぼうそう:Runaway / reckless driving|止:と:Stop@停止:ていし:Suspension / stoppage;中止:ちゅうし:Cancellation / stopping;防止:ぼうし:Prevention;禁止:きんし:Prohibition / ban|飛:と:Fly@飛行:ひこう:Aviation / flight;飛躍:ひやく:Leap / rapid progress;雄飛:ゆうひ:Taking active flight / embarking;突飛:とっぴ:Wild / eccentric|泳:およ:Swim@水泳:すいえい:Swimming;泳法:えいほう:Swimming stroke;競泳:きょうえい:Competitive swimming;力泳:りきえい:Swimming with all one's might|動:うご:Move@運動:うんどう:Exercise / sports;活動:かつどう:Activity;動物:どうぶつ:Animal;自動:じどう:Automatic|働:はたら:Work@労働:ろうどう:Manual labor / work;実働:じつどう:Actual work / operation;稼働:かどう:Operation / running;稼働:かどう:Operation / running|休:やす:Rest,Take a break@休日:きゅうじつ:Holiday / day off;休憩:きゅうけい:Rest / recess;休業:きゅうぎょう:Suspension of business;連休:れんきゅう:Consecutive holidays|起:お:Wake up,Rise@起床:きしょう:Getting out of bed;起動:きどう:Startup / booting;起源:きげん:Origin / beginning;起業:きぎょう:Starting a business|寝:ね:Sleep,Lie down@寝室:しんしつ:Bedroom;昼寝:ひるね:Afternoon nap;就寝:しゅうしん:Going to bed;寝台:しんだい:Bed / couch|座:すわ:Sit@座席:ざせき:Seat;正座:せいざ:Kneeling upright;講座:こうざ:Lecture course;星座:せいざ:Constellation|立:た:Stand@独立:どくりつ:Independence;確立:かくりつ:Establishment;立派:りっぱ:Splendid / fine;立場:たちば:Standpoint / position|乗:の:Ride,Get on@乗客:じょうきゃく:Passenger;乗車:じょうしゃ:Boarding a train/car;乗馬:じょうば:Horseback riding;搭乗:とうじょう:Boarding an airplane|降:お:Descend,Get off,Fall@降車:こうしゃ:Getting off a vehicle;降雪:こうせつ:Snowfall;降伏:こうふく:Surrender / submission;下降:かこう:Descent / fall|転:ころ:Roll,Turn over@運転:うんてん:Driving / operation;回転:かいてん:Rotation / turning;移転:いてん:Relocation / moving;転換:てんかん:Conversion / shift|洗:あら:Wash@洗濯:せんたく:Laundry / washing;洗面:せんめん:Washing one's face;洗練:せんれん:Refinement / polish;水洗:すいせん:Flushing / washing with water|泣:な:Cry@号泣:ごうきゅう:Crying loudly / wailing;泣顔:なきがお:Crying face;感泣:かんきゅう:Weeping with gratitude;泣声:なきごえ:Crying voice|笑:わら:Laugh,Smile@笑顔:えがお:Smiling face;苦笑:くしょう:Bitter smile;爆笑:ばくしょう:Burst of laughter;微笑:びしょう:Smile|押:お:Push@押印:おういん:Affixing a seal;押収:おうしゅう:Seizure / confiscation;押送:おうそう:Escorting under guard;後押:あとおし:Backing / boosting|引:ひ:Pull@割引:わりびき:Discount;引用:いんよう:Quotation / citation;引力:いんりょく:Gravitational attraction;強引:ごういん:Forcible / pushy|拾:ひろ:Pick up@拾得:しゅうとく:Finding lost property;拾集:しゅうしゅう:Gathering / picking up;収拾:しゅうしゅう:Settlement / control;拾遺:しゅうい:Gleaning / supplement|捨:す:Throw away,Discard@取捨:しゅしゃ:Selection / adoption or rejection;喜捨:きしゃ:Almsgiving / donation;捨身:しゃしん:Self-sacrifice;見捨:みすて:Abandoning|触:さわ:Touch,Feel@接触:せっしょく:Contact / touch;触覚:しょっかく:Sense of touch / antenna;感触:かんしょく:Feel / texture;抵触:ていしょく:Conflict with / violation|抜:ぬ:Pull out,Extract@抜群:ばつぐん:Outstanding / preeminent;選抜:せんばつ:Selection / picking out;抜擢:ばってき:Promotion / selection;抜粋:ばっすい:Extract / excerpt|抱:だ:Embrace,Hold@抱負:ほうふ:Aspiration / ambition;抱擁:ほうよう:Embrace / hug;辛抱:しんぼう:Patience / endurance;介抱:かいほう:Nursing / caring for|浮:う:Float@浮力:ふりょく:Buoyancy;浮沈:ふちん:Rise and fall / ups and downs;浮上:ふじょう:Surfacing / rising;浮遊:ふゆう:Floating / drifting|沈:しず:Sink@沈没:ちんぼつ:Sinking / submersion;沈黙:ちんもく:Silence;沈静:ちんせい:Calmness / stillness;沈痛:ちんつう:Deep sorrow / grief|渡:わた:Cross,Hand over@譲渡:じょうと:Transfer / assignment;渡航:とこう:Voyage / overseas trip;引渡:ひきわたし:Delivery / extradition;渡米:とべい:Going to America|逃:に:Escape,Run away@逃走:とうそう:Flight / escape;逃亡:とうぼう:Escape / fleeing;逃避:とうひ:Escape / evasion;敗逃:はいとう:Rout / defeat and flight|追:お:Chase,Follow@追加:ついか:Addition / supplement;追及:ついきゅう:Pursuit / investigation;追悼:ついとう:Mourning / memorial;追跡:ついせき:Pursuit / tracking|越:こ:Cross over,Exceed@超越:ちょうえつ:Transcendence;優越:ゆうえつ:Superiority / supremacy;越境:えっきょう:Border crossing;年越:としこし:New Year's Eve|落:お:Fall,Drop@落下:らっか:Fall / descent;落選:らくせん:Defeat in election;落成:らくせい:Completion of building;部落:ぶらく:Settlement / hamlet|登:のぼ:Climb@登山:とざん:Mountain climbing;登録:とうろく:Registration;登校:とうこう:Attending school;登場:とうじょう:Appearance on stage|踏:ふ:Step on,Tread@踏切:ふみきり:Railway crossing;踏襲:とうしゅう:Following precedent;未踏:みとう:Untrodden / unexplored;踏査:とうさ:Field survey / exploration|散:ち:Scatter,Disperse@散歩:さんぽ:Walk / stroll;解散:かいさん:Dissolution / dispersing;散乱:さんらん:Dispersal / scattered around;発散:はっさん:Emission / letting off steam|集:あつ:Gather,Collect@集合:しゅうごう:Gathering / assembly;集中:しゅうちゅう:Concentration;集団:しゅうだん:Group / mass;編集:へんしゅう:Editing / compilation|並:なら:Line up,Average@並列:へいれつ:Parallel;並行:へいこう:Side by side / parallel;町並:まちなみ:Townscape / street of houses;人並:ひとなみ:Average / ordinary|列:れつ:Row,Line,Queue@列車:れっしゃ:Train;行列:ぎょうれつ:Queue / procession;配列:はいれつ:Arrangement / sequence;整列:せいれつ:Lining up / forming a line|移:うつ:Move,Shift,Transfer@移動:いどう:Movement / transfer;移民:いみん:Emigrant / immigrant;移転:いてん:Relocation;移乗:いじょう:Transferring vehicles|向:む:Face,Toward,Direction@方向:ほうこう:Direction / course;傾向:けいこう:Tendency / trend;向上:こうじょう:Improvement / elevation;意向:いこう:Intention / purpose|折:お:Fold,Break,Bend@骨折:こっせつ:Bone fracture;折衷:せっちゅう:Compromise;曲折:きょくせつ:Twists and turns;屈折:くっせつ:Refraction / bending|刻:きざ:Engrave,Carve,Time@深刻:しんこく:Serious / grave;時刻:じこく:Time / hour;遅刻:ちこく:Tardiness / being late;彫刻:ちょうこく:Sculpture / carving|切:き:Cut@親切:しんせつ:Kind / friendly;切符:きっぷ:Ticket;適切:てきせつ:Appropriate / suitable;締切:しめきり:Deadline|貼:は:Paste,Stick,Apply@貼付:ちょうふ:Pasting / applying;貼用:ちょうよう:Affixing / sticking on;貼紙:はりがみ:Sticker / paper slip;貼札:はりふだ:Placard / sticker|入:はい:Enter,Insert@入口:いりぐち:Entrance;入学:にゅうがく:School admission;輸入:ゆにゅう:Importation;入場:にゅうじょう:Entrance / admission|出:で:Exit,Put out,Leave@出口:でぐち:Exit;出発:しゅっぱつ:Departure;輸出:ゆしゅつ:Exportation;出席:しゅっせき:Attendance|打:う:Hit,Strike@打撃:だげき:Blow / strike / shock;打球:だきゅう:Batted ball;安打:あんだ:Base hit;打開:だかい:Breakthrough|撃:う:Attack,Defeat@攻撃:こうげき:Attack / strike;衝撃:しょうげき:Impact / shock;目撃:もくげき:Witnessing / sighting;迎撃:げいげき:Interception / counterattack",
+    6: "見:み:See,Look@意見:いけん:Opinion / view;見解:けんかい:Opinion / point of view;見本:みほん:Sample / specimen;発見:はっけん:Discovery|聞:き:Hear,Listen,Ask@新聞:しんぶん:Newspaper;見聞:けんぶん:Information / observation;伝聞:でんぶん:Hearsay / rumor;伝聞:でんぶん:Hearsay / rumor|読:よ:Read@読書:どくしょ:Reading books;読者:どくしゃ:Reader;速読:そくどく:Speed reading;読解:どっかい:Reading comprehension|書:か:Write@書類:しょるい:Documents / papers;書道:しょどう:Calligraphy;書店:しょてん:Bookstore;読書:どくしょ:Reading|話:はな:Speak,Talk@電話:でんわ:Telephone;会話:かいわ:Conversation;世話:せわ:Looking after / care;話題:わだい:Topic of conversation|語:かた:Language,Word,Narrate@言語:げんご:Language / speech;物語:ものがたり:Story / tale;単語:たんご:Word / vocabulary;敬語:けいご:Honorific language|言:い:Say,Word@発言:はつげん:Statement / remark;伝言:でんごん:Message;方言:ほうげん:Dialect;宣言:せんげん:Declaration / proclamation|思:おも:Think,Feel@思想:しそう:Thought / ideology;意思:いし:Intention / purpose;思索:しさく:Thinking / contemplation;思考:しこう:Thinking / thought|考:かんが:Consider,Think@思考:しこう:Thinking / thought;参考:さんこう:Reference / consultation;再考:さいこう:Reconsideration;考案:こうあん:Plan / contrivance|知:し:Know@知識:ちしき:Knowledge / information;通知:つうち:Notice / notification;知事:ちじ:Prefectural governor;認知:にんち:Recognition / acknowledgment|覚:おぼ:Remember,Awake,Memorize@覚悟:かくご:Readiness / resolution;感覚:かんかく:Sense / sensation;幻覚:げんかく:Hallucination;自覚:じかく:Self-awareness|忘:わす:Forget@忘年:ぼうねん:Forgetting the year's cares;忘却:ぼうきゃく:Lapse of memory / forgetting;健忘:けんぼう:Forgetfulness / amnesia;忘我:ぼうが:Self-forgetfulness / trance|決:き:Decide@決定:けってい:Decision / determination;解決:かいけつ:Settlement / solution;決意:けつい:Decision / resolve;判決:はんけつ:Judicial decision / judgment|信:しん:Believe,Trust,Message@信用:しんよう:Confidence / trust;自信:じしん:Self-confidence;通信:つうしん:Correspondence / communication;信号:しんごう:Signal / traffic light|疑:うたが:Doubt,Suspect@疑問:ぎもん:Question / doubt;容疑:ようぎ:Suspicion / charge;疑惑:ぎわく:Doubt / suspicion;質疑:しつぎ:Questioning / inquiry|願:ねが:Wish,Request@願書:がんしょ:Written application;祈願:きがん:Prayer / supplication;志願:しがん:Volunteering / desire;悲願:ひがん:Long-cherished desire|頼:たの:Request,Rely on@依頼:いらい:Request / commission;信頼:しんらい:Reliance / trust;無頼:ぶらい:Roguish / hoodlum;頼所:よりどころ:Reliable support / foundation|呼:よ:Call@呼吸:こきゅう:Breathing / respiration;点呼:てんこ:Roll call;連呼:れんこ:Calling repeatedly;喚呼:かんこ:Shouting / hail|答:こた:Answer@回答:かいとう:Reply / answer;答弁:とうべん:Response / defense;返答:へんとう:Reply / answer;正答:せいとう:Correct answer|説:せつ:Explain,Theory@説明:せつめい:Explanation;小説:しょうせつ:Novel / story;演説:えんぜつ:Speech / address;伝説:でんせつ:Legend / tradition|記:き:Record,Write down@記事:きじ:Article / news story;日記:にっき:Diary;記者:きしゃ:Reporter / journalist;記録:きろく:Record / minutes|訳:わけ:Translate,Reason@通訳:つうやく:Interpretation / interpreter;翻訳:ほんやく:Translation;内訳:うちわけ:Itemization / breakdown;訳語:やくご:Translated word / equivalent|伝:つた:Transmit,Convey@伝統:でんとう:Tradition / convention;手伝:てつだい:Help / assistance;伝言:でんごん:Message;宣伝:せんでん:Propaganda / advertising|認:みと:Recognize,Acknowledge@確認:かくにん:Confirmation / verification;認識:にんしき:Recognition / perception;承認:しょうにん:Approval / recognition;公認:こうにん:Official recognition|識:しき:Consciousness,Knowledge@意識:いしき:Consciousness / awareness;常識:じょうしき:Common sense;知識:ちしき:Knowledge;見識:けんしき:Insight / discernment|買:か:Buy@売買:ばいばい:Buying and selling / trade;買物:かいもの:Shopping;買収:ばいしゅう:Acquisition / buyout;購買:こうばい:Purchase / buying|売:う:Sell@売買:ばいばい:Trade / commerce;販売:はんばい:Sales / marketing;売上:うりあげ:Sales proceeds;特売:とくばい:Special sale / bargain|飲:の:Drink@飲食:いんしょく:Food and drink;飲料:いんりょう:Beverage / drink;飲酒:いんしゅ:Drinking alcohol;暴飲:ぼういん:Excessive drinking|食:た:Eat,Food@食事:しょくじ:Meal;食堂:しょくどう:Cafeteria / dining hall;朝食:ちょうしょく:Breakfast;夕食:ゆうしょく:Dinner / supper|払:はら:Pay,Sweep away@支払:しはらい:Payment;前払:まえばらい:Advance payment;払拭:ふっしょく:Wiping out / dispelling;月払:つきばらい:Monthly payment|貸:か:Lend@賃貸:ちんたい:Lease / rent;貸出:かしだし:Lending out / loan;貸借:たいしゃく:Debits and credits / loan;貸家:かしや:House for rent|借:か:Borrow@借金:しゃっきん:Debt / loan;借用:しゃくよう:Borrowing / loan;賃借:ちんしゃく:Lease / renting;借地:しゃくち:Leased land|返:かえ:Return@返事:へんじ:Reply / answer;返済:へんさい:Repayment / refund;恩返:おんがえし:Repaying a favor;返答:へんとう:Reply / answer|使:つか:Use@使用:しよう:Use / application;大使:たいし:Ambassador;使命:しめい:Mission / errand;行使:こうし:Exercise / use|持:も:Hold,Have@気持:きもち:Feeling / mood;支持:しじ:Support / backing;維持:いじ:Maintenance / preservation;所持:しょじ:Possession / owning|取:と:Take@取得:しゅとく:Acquisition;取引:とりひき:Transaction / dealings;取材:しゅざい:News gathering / coverage;取消:とりけし:Cancellation|受:う:Receive,Undergo@受験:じゅけん:Taking an exam;受領:じゅりょう:Receipt / receiving;受付:うけつけ:Reception desk;受賞:じゅしょう:Winning a prize|給:きゅう:Provide,Wage,Salary@給料:きゅうりょう:Salary / wages;供給:きょうきゅう:Supply / provision;月給:げっきゅう:Monthly salary;支給:しきゅう:Payment / provision|届:とど:Deliver,Reach@届出:とどけで:Notification / report;届先:とどけさき:Delivery address;不届:ふとどき:Insolent / rude;見届:みとどけ:Seeing through to the end;行届:ゆきとどき:Attentive / scrupulous|贈:おく:Gift,Present@贈呈:ぞうてい:Presentation / gift;寄贈:きぞう:Donation / gift;贈答:ぞうとう:Exchange of gifts;追贈:ついぞう:Posthumous conferment|迎:むか:Welcome,Meet,Greet@歓迎:かんげい:Welcome / reception;送迎:そうげい:Picking up and dropping off;出迎:でむかえ:Meeting / welcoming;迎撃:げいげき:Counterattack / interception|探:さが:Search,Look for@探検:たんけん:Exploration / expedition;探偵:たんてい:Detective;探究:たんきゅう:Research / exploration;捜探:そうたん:Search / finding|索:さく:Search,Cord@検索:けんさく:Search / lookup;模索:もさく:Groping / exploration;捜索:そうさく:Search / investigation;索引:さくいん:Index|換:か:Exchange@交換:こうかん:Exchange / replacement;変換:へんかん:Conversion / change;換気:かんき:Ventilation;転換:てんかん:Conversion / diversion|構:かま:Construct,Mind@結構:けっこう:Fine / splendid / quite;構成:こうせい:Composition / structure;機構:きこう:Mechanism / organization;構造:こうぞう:Structure / construction|申:もう:Say (humble)@申請:しんせい:Application / petition;申告:しんこく:Declaration / return;申出:もうしで:Proposal / offer;内申:ないしん:Confidential report|習:なら:Learn@練習:れんしゅう:Practice;習慣:しゅうかん:Habit / custom;予習:よしゅう:Preparation of lessons;復習:ふくしゅう:Review / revision|科:か:Course,Subject,Department@科学:かがく:Science;教科:きょうか:Curriculum / school subject;学科:がっか:Academic department;外科:げか:Surgery department|算:さん:Calculate,Compute@計算:けいさん:Calculation;予算:よさん:Budget / estimate;算数:さんすう:Arithmetic;決算:けっさん:Settlement of accounts|告:つ:Announce,Tell@報告:ほうこく:Report / information;警告:けいこく:Warning / advice;広告:こうこく:Advertisement;宣告:せんこく:Sentence / verdict",
+    7: "国:くに:Country,Nation@外国:がいこく:Foreign country;国民:こくみん:Citizen / people;国際:こくさい:International;国家:こっか:State / nation|都:と:Metropolis,Capital@都市:とし:City / metropolis;首都:しゅと:Capital city;都会:とかい:City / urban area;都合:つごう:Convenience / circumstances|道:みち:Road,Path,Street@道路:どうろ:Road / highway;鉄道:てつどう:Railway;道徳:どうとく:Morals / morality;歩道:ほどう:Sidewalk|府:ふ:Prefecture,Agency@政府:せいふ:Government;幕府:ばくふ:Shogunate;府県:ふけん:Prefectures;府民:ふみん:Prefectural residents|県:けん:Prefecture@県庁:けんちょう:Prefectural office;県民:けんみん:Prefectural residents;県内:けんない:Inside the prefecture;県外:けんがい:Outside the prefecture|市:し:City,Market@市民:しみん:Citizen / city residents;市場:いちば:Market / marketplace;市長:しちょう:City mayor;都市:とし:City / town|区:く:Ward,District@区別:くべつ:Distinction / differentiation;地区:ちく:District / area;区域:くいき:Zone / territory;区分:くぶん:Division / classification|町:まち:Town@町民:ちょうみん:Townspeople;下町:したまち:Downtown / old town;町内:ちょうない:In the neighborhood / town;町長:ちょうちょう:Town mayor|村:むら:Village@村人:むらびと:Villager;農村:のうそん:Agricultural village / rural;漁村:ぎょそん:Fishing village;村長:そんちょう:Village headman / mayor|街:まち:Street,City quarter@街道:かいどう:Highway / main road;市街:しがい:City streets / urban area;街路:がいろ:Street / road;街角:まちかど:Street corner|駅:えき:Station@駅前:えきまえ:In front of the station;駅長:えきちょう:Stationmaster;駅員:えきいん:Station employee;駅舎:えきしゃ:Station building|港:みなと:Port,Harbor@空港:くうこう:Airport;港湾:こうわん:Harbor / port;出港:しゅっこう:Leaving port / departure;入港:にゅうこう:Entering port / arrival|寺:てら:Temple (Buddhist)@寺院:じいん:Temple / sacred building;山寺:やまでら:Mountain temple;古寺:こじ:Old temple;寺社:じしゃ:Temples and shrines|社:しゃ:Company,Shrine (Shinto)@社会:しゃかい:Society / the public;会社:かいしゃ:Company / corporation;社長:しゃちょう:Company president;神社:じんじゃ:Shinto shrine|院:いん:Institution,Temple@病院:びょういん:Hospital;退院:たいいん:Discharge from hospital;寺院:じいん:Temple;医院:いいん:Doctor's office / clinic|堂:どう:Hall,Public building@食堂:しょくどう:Dining hall / cafeteria;本堂:ほんどう:Main temple hall;講堂:こうどう:Auditorium / lecture hall;堂々:どうどう:Magnificent / imposing|店:みせ:Shop,Store@店員:てんいん:Shop assistant / clerk;書店:しょてん:Bookstore;売店:ばいてん:Kiosk / concession stand;本店:ほんてん:Head office / main store|屋:や:Roof,House,Shop@部屋:へや:Room;屋上:おくじょう:Rooftop;家屋:かおく:House / dwelling;屋外:おくがい:Outdoors / open air|室:しつ:Room@教室:きょうしつ:Classroom;室内:しつない:Indoor / inside the room;温室:おんしつ:Greenhouse / hothouse;満室:まんしつ:No vacancy / fully occupied|窓:まど:Window@窓口:まどぐち:Service counter / window;同窓:どうそう:Schoolmate / fellow alumnus;車窓:しゃそう:Train/car window;窓辺:まどべ:Beside the window|階:かい:Floor,Story,Stair@階段:かいだん:Stairs / staircase;階層:かいそう:Social stratum / hierarchy;段階:だんかい:Stage / phase / step;音階:おんかい:Musical scale|戸:と:Door@戸籍:こせき:Family register;門戸:もんこ:Door / entrance;井戸:いど:Water well;雨戸:あまど:Sliding storm door|門:もん:Gate@校門:こうもん:School gate;専門:せんもん:Specialty / profession;入門:にゅうもん:Introduction / manual;名門:めいもん:Distinguished family|壁:かべ:Wall@壁画:へきが:Fresco / wall painting;城壁:じょうへき:Castle walls / rampart;外壁:がいへき:Outer wall;障壁:しょうへき:Barrier / obstacle|庭:にわ:Garden,Yard@庭園:ていえん:Garden / park;校庭:こうてい:Schoolyard / playground;家庭:かてい:Home / family;中庭:なかにわ:Courtyard|柱:はしら:Pillar,Post@支柱:しちゅう:Prop / brace / support;電柱:でんちゅう:Utility pole / telegraph pole;円柱:えんちゅう:Cylinder / round pillar;角柱:かくちゅう:Prism|宿:やど:Inn,Lodge,Lodging@宿題:しゅくだい:Homework;宿泊:しゅくはく:Lodging / hotel stay;下宿:げしゅく:Boarding / lodging;合宿:がっしゅく:Training camp|宅:たく:House,Home,Residence@自宅:じたく:One's home / one's house;帰宅:きたく:Returning home;住宅:じゅうたく:Housing / residence;宅配:たくはい:Home delivery|園:その:Park,Garden@公園:こうえん:Public park;庭園:ていえん:Garden;学園:がくえん:Academy / school;菜園:さいえん:Vegetable garden|場:ば:Place,Location@場所:ばしょ:Place / location;場合:ばあい:Case / occasion / circumstance;広場:ひろば:Plaza / square;工場:こうじょう:Factory / plant|所:ところ:Place@場所:ばしょ:Place / location;近所:きんじょ:Neighborhood;住所:じゅうしょ:Address / residence;長所:ちょうしょ:Strong point / merit|館:かん:Building,Hall@会館:かいかん:Meeting hall / assembly hall;旅館:りょかん:Japanese style inn;本館:ほんかん:Main building;洋館:ようかん:Western style building|建:たて:Build,Construct@建設:けんせつ:Construction / building;建物:たてもの:Building / structure;建造:けんぞう:Construction / building;建国:けんこく:Founding of a nation|築:きず:Fabricate,Build,Construct@建築:けんちく:Architecture / construction;新築:しんちく:New construction;改築:かいちく:Reconstruction / remodeling;築堤:ちくてい:Embankment construction|宮:みや:Palace,Shinto shrine@宮殿:きゅうでん:Palace;離宮:りきゅう:Detached palace / villa;皇宮:こうぐう:Imperial Palace;宮城:きゅうじょう:Imperial Palace|邸:てい:Mansion,Residence@邸宅:ていたく:Mansion / residence;公邸:こうてい:Official residence;私邸:してい:Private residence;官邸:かんてい:Official prime minister residence|城:しろ:Castle@城跡:しろあと:Castle ruins;城壁:じょうへき:Castle walls;落城:らくじょう:Fall of a castle;城下:じょうか:Castle town|塔:とう:Tower,Pagoda@鉄塔:てっとう:Steel tower / pylon;灯塔:とうとう:Lighthouse / light tower;石塔:せきとう:Stone monument / pagoda;宝塔:ほうとう:Treasure pagoda|段:だん:Step,Grade,Rank@段階:だんかい:Stage / phase / grade;階段:かいだん:Stairs / staircase;手段:しゅだん:Means / method;段落:だんらく:Paragraph|隅:すみ:Corner,Nook@四隅:よすみ:Four corners;片隅:かたすみ:One corner / nook;隅角:ぐうかく:Corner / angle;隅々:すみずみ:Every corner / nooks and crannies|側:がわ:Side@左側:ひだりがわ:Left side;右側:みぎがわ:Right side;側面:そくめん:Side / flank / profile;両側:りょうがわ:Both sides|端:はし:Edge,End,Tip@先端:せんたん:Tip / forefront / cutting edge;末端:まったん:End / terminus;極端:きょくたん:Extreme;発端:ほったん:Origin / inception|底:そこ:Bottom@海底:かいてい:Seabed / ocean floor;徹底:てってい:Thoroughness / consistency;谷底:たにぞこ:Bottom of a valley;根底:こんてい:Root / foundation|頂:いただき:Top,Summit@山頂:さんちょう:Summit / mountaintop;頂上:ちょうじょう:Summit / apex;登頂:とうちょう:Reaching the summit;頂点:ちょうてん:Vertex / pinnacle|境:さかい:Boundary,Border,Situation@環境:かんきょう:Environment;国境:こっきょう:National border;境目:さかいめ:Border / dividing line;心境:しんきょう:State of mind|囲:かこ:Surround,Enclose@周囲:しゅうい:Surroundings / circumference;範囲:はんい:Extent / scope / range;包囲:ほうい:Siege / encirclement;囲碁:いご:Go (board game)|横:よこ:Side,Horizontal@横断:おうだん:Crossing / traversal;横顔:よこがお:Profile / side profile;専横:せんおう:Tyranny / arbitrariness;横領:おうりょう:Embezzlement|逆:ぎゃく:Reverse,Opposite@逆転:ぎゃくてん:Reversal / turnabout;逆流:ぎゃくりゅう:Countercurrent / reflux;反逆:はんぎゃく:Treason / rebellion;逆境:ぎゃっきょう:Adversity|辺:へん:Area,Vicinity,Border@周辺:しゅうへん:Circumference / vicinity;海辺:うみべ:Seashore / beach;川辺:かわべ:Riverside;近辺:きんぺん:Neighborhood / vicinity|地:ち:Ground,Earth,Land@地下:ちか:Underground;土地:とち:Land / estate;地方:ちほう:Region / locality;地震:じしん:Earthquake",
+    8: "家:いえ:House,Home,Family@家族:かぞく:Family;家賃:やちん:Rent;国家:こっか:State / nation;家屋:かおく:House / dwelling|具:ぐ:Tool,Utensil,Ingredient@道具:どうぐ:Tool / implement;家具:かぐ:Furniture;具体:ぐたい:Concrete / tangible;器具:きぐ:Apparatus / instrument|箱:はこ:Box@本箱:ほんばこ:Bookcase;重箱:じゅうばこ:Tiered food boxes;木箱:きばこ:Wooden box;箱入:はこいり:Boxed / sheltered|袋:ふくろ:Bag,Sack@手袋:てぶくろ:Gloves;紙袋:かみぶくろ:Paper bag;足袋:たび:Tabi / Japanese split-toe socks;胃袋:いぶくろ:Stomach / appetite|皿:さら:Plate,Dish@灰皿:はいざら:Ashtray;小皿:こざら:Small plate / saucer;皿洗:さらあらい:Dishwashing;大皿:おおざら:Platter / large plate|飯:めし:Meal,Cooked rice@ご飯:ごはん:Cooked rice / meal;朝飯:あさめし:Breakfast;夕飯:ゆうはん:Dinner / supper;昼飯:ひるめし:Lunch|菜:な:Vegetable,Side dish@野菜:やさい:Vegetable;菜食:さいしょく:Vegetarian diet;白菜:はくさい:Chinese cabbage;総菜:そうざい:Side dish / prepared food|席:せき:Seat@出席:しゅっせき:Attendance;欠席:けっせき:Absence;座席:ざせき:Seat;客席:きゃくせき:Audience seats|靴:くつ:Shoes@靴下:くつした:Socks;革靴:かわぐつ:Leather shoes;雨靴:あまぐつ:Rain boots;靴屋:くつや:Shoe shop|荷:に:Luggage,Baggage,Load@荷物:にもつ:Luggage / package;重荷:おもに:Heavy burden / load;出荷:しゅっか:Shipment / forwarding;負荷:ふか:Load / burden|札:ふだ:Tag,Bill,Paper money@改札:かいさつ:Ticket examination / gate;名札:なふだ:Name tag / badge;札束:さつたば:Roll / wad of bills;落札:らくさつ:Successful bid|券:けん:Ticket@旅券:りょけん:Passport;証券:しょうけん:Securities / bonds;債券:さいけん:Bond / debenture;食券:しょっけん:Meal ticket|機:き:Machine,Opportunity@機会:きかい:Opportunity / chance;機能:きのう:Function / capability;機械:きかい:Machine / mechanism;危機:きき:Crisis / danger|械:かい:Machine,Apparatus@機械:きかい:Machine / machinery;器械:きかい:Instrument / apparatus;械化:かいか:Mechanization;軍械:ぐんかい:Weapons / military equipment|器:うつわ:Vessel,Instrument,Container@食器:しょっき:Tableware / dishes;楽器:がっき:Musical instrument;容器:ようき:Container / vessel;器用:きよう:Skillful / handy|紙:かみ:Paper@手紙:てがみ:Letter;折紙:おりがみ:Origami / folded paper;用紙:ようし:Blank form / sheet;和紙:わし:Japanese paper;白紙:はくし:Blank paper|線:せん:Line@直線:ちょくせん:Straight line;曲線:きょくせん:Curved line;電線:でんせん:Electric wire;線路:せんろ:Railway track|糸:いと:Thread@毛糸:けいと:Woolen yarn / knitting wool;絹糸:きぬいと:Silk thread;製糸:せいし:Silk reeling;抜糸:ばっし:Removal of stitches|服:ふく:Clothes@洋服:ようふく:Western clothes;和服:わふく:Japanese clothes;克服:こくふく:Conquest / overcoming;服従:ふくじゅう:Obedience / submission|着:き:Wear,Arrive@上着:うわぎ:Coat / jacket;下着:したぎ:Underwear;到着:とうちゃく:Arrival;定着:ていちゃく:Taking root / establishing|布:ぬの:Cloth@毛布:もうふ:Blanket;財布:さいふ:Wallet / purse;分布:ぶんぷ:Distribution / allocation;布告:ふこく:Edict / proclamation|鏡:かがみ:Mirror@眼鏡:めがね:Glasses / spectacles;鏡台:きょうだい:Dresser / dressing table;水鏡:みずかがみ:Water surface reflecting;鏡面:きょうめん:Mirror surface|傘:かさ:Umbrella@雨傘:あまがさ:Rain umbrella;日傘:ひがさ:Parasol / sunshade;傘下:さんか:Under the umbrella / affiliated;破傘:やぶれがさ:Tattered umbrella|本:ほん:Book,Origin,Main@基本:きほん:Basics / foundation;日本:にほん:Japan;本当:ほんとう:Truth / reality;本人:ほんにん:The person in question|棚:たな:Shelf@本棚:ほんだな:Bookshelf;戸棚:とだな:Cupboard / cabinet;網棚:あみだな:Luggage rack;棚引:たなびき:Trailing (clouds/smoke)|机:つくえ:Desk@机上:きじょう:On the desk / theoretical;机下:きか:Addressed to (humble);経机:きょうづくえ:Buddhist sutra desk;文机:ふづくえ:Writing desk|湯:ゆ:Hot water@熱湯:ねっとう:Boiling water;湯気:ゆげ:Steam / vapor;銭湯:せんとう:Public bathhouse;湯船:ゆぶね:Bathtub|濯:たく:Wash,Laundry@洗濯:せんたく:Laundry / washing;濯足:たくそく:Washing one's feet;濯洗:たくせん:Washing clean;灌濯:かんたく:Washing / ablution|沸:わ:Boil,Seethe@沸騰:ふっとう:Boiling / seething;沸点:ふってん:Boiling point;煮沸:しゃふつ:Boiling / scalding;沸然:ふつぜん:Suddenly flaring up|乾:かわ:Dry@乾燥:かんそう:Dryness / drying;乾杯:かんぱい:Cheers / toast;乾期:かんき:Dry season;乾物:かんぶつ:Dried food / groceries|掃:は:Sweep@掃除:そうじ:Cleaning / sweeping;清掃:せいそう:Cleaning / scavenging;掃討:そうとう:Mopping up / clearing out;掃射:そうしゃ:Strafing / sweeping fire|肉:にく:Meat@牛肉:ぎゅうにく:Beef;筋肉:きんにく:Muscle;肉体:にくたい:Physical body / flesh;皮肉:ひにく:Cynicism / irony|茶:ちゃ:Tea@紅茶:こうちゃ:Black tea;緑茶:りょくちゃ:Green tea;喫茶:きっさ:Tea drinking;茶道:さどう:Tea ceremony|薬:くすり:Medicine@薬品:やくひん:Medicines / chemicals;薬局:やっきょく:Pharmacy / drugstore;農薬:のうやく:Agricultural chemical / pesticide;火薬:かやく:Gunpowder|医:い:Medicine,Doctor@医者:いしゃ:Doctor / physician;医学:いがく:Medical science;医院:いいん:Clinic / doctor's office;医師:いし:Doctor / physician|煙:けむり:Smoke@禁煙:きんえん:No smoking;煙突:えんとつ:Chimney / smokestack;喫煙:きつえん:Smoking;黒煙:こくえん:Black smoke|根:ね:Root@根本:こんぽん:Root / foundation;根気:こんき:Patience / perseverance;屋根:やね:Roof;根源:こんげん:Root / origin|種:たね:Seed,Kind,Species@種類:しゅるい:Variety / kind / type;人種:じんしゅ:Race / ethnic group;種子:しゅし:Seed;各種:かくしゅ:Every kind / all sorts|枝:えだ:Branch@小枝:こえだ:Twig / spray;枝葉:しよう:Foliage / minor details;枝線:しせん:Branch line;枯枝:かれえだ:Dead branch|桜:さくら:Cherry blossom@桜花:おうか:Cherry blossoms;夜桜:よざくら:Cherry blossoms at night;桜色:さくらいろ:Cherry blossom pink;山桜:やまざくら:Wild cherry tree|梅:うめ:Plum@梅雨:つゆ:Rainy season;梅酒:うめしゅ:Plum wine;白梅:はくばい:White plum blossoms;紅梅:こうばい:Red plum blossoms|森:もり:Forest@森林:しんりん:Forest / woodland;森厳:しんげん:Solemn / august;青森:あおもり:Aomori;森然:しんぜん:Dense and quiet forest|林:はやし:Woods,Grove@森林:しんりん:Forest / woods;林業:りんぎょう:Forestry;密林:みつりん:Dense forest / jungle;山林:さんりん:Mountain forest|木:き:Tree,Wood@木材:もくざい:Lumber / timber / wood;木星:もくせい:Jupiter;木綿:もめん:Cotton;大木:たいぼく:Large tree|花:はな:Flower@花火:はなび:Fireworks;花瓶:かびん:Flower vase;開花:かいか:Blooming / flowering;花束:はなたば:Bouquet|草:くさ:Grass,Weed@草花:くさばな:Flowering plants / grasses;雑草:ざっそう:Weed;草原:そうげん:Grassland / prairie;薬草:やくそう:Medicinal herb|葉:は:Leaf@言葉:ことば:Word / language;紅葉:こうよう:Autumn foliage / red leaves;葉書:はがき:Postcard;落葉:らくよう:Fallen leaves|生:なま:Life,Raw,Birth@生活:せいかつ:Life / living;先生:せんせい:Teacher;生産:せいさん:Production / manufacture;生命:せいめい:Life / existence|咲:さ:Bloom@咲出:さきだし:Beginning to bloom;返咲:かえりざき:Second blooming / comeback;遅咲:おそざき:Late blooming;早咲:はやざき:Early blooming|枯:か:Wither,Dry up@枯死:こし:Withering / dying;枯燥:こそう:Drying up / desiccating;枯草:かれくさ:Dry grass / hay;栄枯:えいこ:Rise and fall / ups and downs",
+    9: "学:まな:Study,Learning@学校:がっこう:School;大学:だいがく:University / college;科学:かがく:Science;学生:がくせい:Student|校:こう:School@学校:がっこう:School;校長:こうちょう:School principal;高校:こうこう:High school;校舎:こうしゃ:School building|教:おし:Teach,Religion@教育:きょういく:Education;教室:きょうしつ:Classroom;宗教:しゅうきょう:Religion;教授:きょうじゅ:Professor|研:けん:Polish,Study@研究:けんきゅう:Research / study;研修:けんしゅう:Training / workshop;研鑽:けんさん:Diligent study;研磨:けんま:Polishing / grinding|究:きゅう:Research,Investigate@研究:けんきゅう:Research / investigation;究極:きゅうきょく:Ultimate / final;追究:ついきゅう:Pursuit / close investigation;探究:たんきゅう:Quest / exploration|試:ため:Test,Try@試験:しけん:Examination / test;試合:しあい:Match / game;試作:しさく:Trial manufacturing / prototype;試行:しこう:Trial run / experiment|験:けん:Test,Examine@経験:けいけん:Experience;試験:しけん:Examination / test;実験:じっけん:Experiment;体験:たいけん:Personal experience|業:ぎょう:Business,Vocation,Industry@卒業:そつぎょう:Graduation;事業:じぎょう:Project / enterprise;産業:さんぎょう:Industry;授業:じゅぎょう:Class / lesson|職:しょく:Employment,Job@職業:しょくぎょう:Occupation / profession;職場:しょくば:Place of work / workplace;職員:しょくいん:Staff member / employee;転職:てんしょく:Change of occupation|務:つと:Task,Duties@事務:じむ:Clerical work / office work;公務:こうむ:Public duties / official business;義務:ぎむ:Duty / obligation;勤務:きんむ:Service / duty|経:へ:Manage,Pass through,Sutra@経済:けいざい:Economy;経験:けいけん:Experience;経歴:けいれき:Personal history / career;経営:けいえい:Management / administration|済:す:Finish,Settle,Economy@経済:けいざい:Economy;返済:へんさい:Repayment;救済:きゅうさい:Relief / rescue;共済:きょうさい:Mutual aid|政:まつりごと:Politics,Government@政治:せいじ:Politics / government;政府:せいふ:Government;政策:せいさく:Political measure / policy;市政:しせい:Municipal government|治:なお:Govern,Cure@政治:せいじ:Politics;治療:ちりょう:Medical treatment;治水:ちすい:Flood control;治安:ちあん:Public order|法:ほう:Law,Method@法律:ほうりつ:Law / act;方法:ほうほう:Method / way;憲法:けんぽう:Constitution;文法:ぶんぽう:Grammar|律:りつ:Law,Rhythm@法律:ほうりつ:Law / statute;規律:きりつ:Discipline / order;旋律:せんりつ:Melody / tune;律動:りつどう:Rhythm / rhythmic movement|際:さい:Occasion,International@国際:こくさい:International;交際:こうさい:Association / company;実際:じっさい:Practically / actually;間際:まぎわ:On the verge of / just before|係:かかり:Connection,Person in charge@関係:かんけい:Relationship / connection;連係:れんけい:Connection / linking;係留:けいりゅう:Mooring / anchorage;係員:かかりいん:Person in charge / clerk|団:だん:Group,Association@団体:だんたい:Organization / group;集団:しゅうだん:Group / mass;劇団:げきだん:Theatrical company / troupe;布団:ふとん:Futon / Japanese bedding|課:か:Section,Chapter,Lesson@日課:にっか:Daily routine;課長:かちょう:Section manager;課題:かだい:Subject / theme / task;課税:かぜい:Taxation|役:やく:Duty,Role,Service@役所:やくしょ:Government office;役員:やくいん:Officer / director;役割:やくわり:Part / role;主役:しゅやく:Leading role / protagonist|官:かん:Official,Government@警官:けいかん:Police officer;官邸:かんてい:Official residence;官僚:かんりょう:Bureaucrat;長官:ちょうかん:Director / chief|警:けい:Guard,Warn,Police@警察:けいさつ:Police;警告:けいこく:Warning / advice;警戒:けいかい:Vigilance / precaution;警備:けいび:Defense / guard|署:しょ:Government office,Station@署長:しょちょう:Police / station chief;署名:しょめい:Signature / autograph;部署:ぶしょ:Post / department;本署:ほんしょ:Main police station|議:ぎ:Debate,Parliament@会議:かいぎ:Meeting / conference;議事:ぎじ:Proceedings / business;議論:ぎろん:Argument / discussion;議長:ぎちょう:Chairman / speaker|民:たみ:People,Nation@国民:こくみん:National / citizen;市民:しみん:Citizen;民主:みんしゅ:Democratic / democracy;民間:みんかん:Private / non-governmental|犯:おか:Crime,Commit@犯罪:はんざい:Crime;犯人:はんにん:Criminal / culprit;共犯:きょうはん:Complicity / accomplice;防犯:ぼうはん:Crime prevention|罪:つみ:Guilt,Sin,Crime@犯罪:はんざい:Crime / offense;罪悪:ざいあく:Crime / sin;無罪:むざい:Innocence / not guilty;有罪:ゆうざい:Guilty|留:とど:Detain,Fasten,Halt@留学:りゅうがく:Studying abroad;留守:るす:Absence / staying away;保留:ほりゅう:Reservation / suspension;停留:ていりゅう:Stoppage / detention|訪:おとず:Visit,Call on@訪問:ほうもん:Call / visit;訪日:ほうにち:Visit to Japan;来訪:らいほう:Visit / call;探訪:たんぼう:News-gathering / searching|招:まね:Invite@招待:しょうたい:Invitation;招集:しょうしゅう:Convocation / summoning;応招:おうしょう:Responding to a summons;身招:みまねき:Beckoning|練:れん:Practice,Knead@練習:れんしゅう:Practice;訓練:くんれん:Training / drill;洗練:せんれん:Polish / refinement;練達:れんたつ:Expertise / skill|慣:な:Accustomed,Habit@習慣:しゅうかん:Habit / custom;慣用:かんよう:Common use / idiomatic;慣例:かんれい:Custom / precedent;見慣:みなれ:Familiar / accustomed to seeing|式:しき:Style,Ceremony,Formula@公式:こうしき:Official / formal / formula;方式:ほうしき:Method / formula;儀式:ぎしき:Ceremony / rite;形式:けいしき:Form / formality|祭:まつり:Festival@祭日:さいじつ:National holiday / festival;祭礼:さいれい:Festival / ritual;祭壇:さいだん:Altar;祭典:さいてん:Festival / celebration|祝:いわ:Celebrate,Congratulate@祝日:しゅくじつ:National holiday;祝福:しゅくふく:Blessing;祝賀:しゅくが:Celebration / congratulations;祝勝:しゅくしょう:Celebrating a victory|企:くわだ:Plan,Scheme,Enterprise@企業:きぎょう:Enterprise / corporation;企画:きかく:Planning / project;企図:きと:Plan / attempt;企及:ききゅう:Attempting to reach|労:ろう:Labor,Toil@労働:ろうどう:Manual labor / work;苦労:くろう:Hardship / trouble;疲労:ひろう:Fatigue / exhaustion;功労:こうろう:Distinguished services|雇:やと:Employ,Hire@雇用:こよう:Employment;解雇:かいこ:Discharge / dismissal;雇員:こいん:Employee;雇主:やといぬし:Employer|商:あきな:Commerce,Trade@商業:しょうぎょう:Commerce / trade;商品:しょうひん:Commodity / goods;商売:しょうばい:Business / trade;商人:しょうにん:Merchant / dealer|貿:ぼう:Trade,Exchange@貿易:ぼうえき:Foreign trade / commerce;密貿:みつぼう:Smuggling;貿買:ぼうばい:Trade / buying and selling;通貿:つうぼう:Trading / commerce|営:いとな:Manage,Conduct business@経営:けいえい:Management / administration;営業:えいぎょう:Business / sales;運営:うんえい:Operation / management;民営:みんえい:Private management|史:し:History@歴史:れきし:History;史料:しりょう:Historical materials;有史:ゆうし:Historical / recorded history;史実:しじつ:Historical fact|績:せき:Exploits,Achievements@成績:せいせき:Results / record / grades;業績:ぎょうせき:Achievement / performance;実績:じっせき:Actual results / achievements;功績:こうせき:Achievements / merits|価:あたい:Value,Price@価格:かかく:Price / value;物価:ぶっか:Prices of commodities;価値:かち:Value / worth;評価:ひょうか:Evaluation / appraisal|争:あらそ:Contend,Dispute,Argue@戦争:せんそう:War;競争:きょうそう:Competition / contest;論争:ろんそう:Controversy / dispute;闘争:とうそう:Strife / conflict|戦:たたか:War,Battle@戦争:せんそう:War;作戦:さくせん:Military operations / strategy;対戦:たいせん:Match / contest / fighting;戦闘:せんとう:Battle / fight|平:たいら:Flat,Peace@平和:へいわ:Peace / harmony;公平:こうへい:Fairness / impartiality;平日:へいじつ:Weekday;平均:へいきん:Average / mean|和:わ:Harmony,Peace@平和:へいわ:Peace / harmony;和服:わふく:Japanese clothes;和解:わかい:Reconciliation / settlement;温和:おんわ:Mild / gentle|部:ぶ:Part,Section,Club,Department@部分:ぶぶん:Part / section;部屋:へや:Room;部長:ぶちょう:Head of a department;全部:ぜんぶ:All / entirety",
+    10: "理:り:Reason,Logic@理由:りゆう:Reason / cause;理想:りそう:Ideal;料理:りょうり:Cooking / cuisine;地理:ちり:Geography|意:い:Idea,Mind,Meaning@意味:いみ:Meaning / significance;意見:いけん:Opinion / view;注意:ちゅうい:Caution / attention;用意:ようい:Preparation / readiness|題:だい:Topic,Problem,Subject@問題:もんだい:Problem / question;話題:わだい:Topic of conversation;宿題:しゅくだい:Homework;題目:だいもく:Title / topic / theme|味:あじ:Flavor,Taste,Meaning@意味:いみ:Meaning;興味:きょうみ:Interest / curiosity;趣味:しゅみ:Hobby;味覚:みかく:Sense of taste|用:よう:Use,Business,Errand@利用:りよう:Use / utilization;用意:ようい:Preparation;作用:さよう:Action / operation / effect;用事:ようじ:Things to do / errand|事:こと:Matter,Thing,Fact@仕事:しごと:Work / job;事故:じこ:Accident / incident;事件:じけん:Event / incident / affair;事実:じじつ:Fact / truth|物:もの:Thing,Object@動物:どうぶつ:Animal;植物:しょくぶつ:Plant / vegetation;荷物:にもつ:Luggage / baggage;食物:しょくもつ:Food / foodstuff|品:しな:Goods,Article,Dignity@商品:しょうひん:Commodity / goods;作品:さくひん:Work of art / piece;部品:ぶひん:Parts / accessories;品格:ひんかく:Grace / dignity|質:しつ:Quality,Matter@質問:しつもん:Question / inquiry;品質:ひんしつ:Quality;物質:ぶっしつ:Substance / matter;素質:そしつ:Aptitude / nature|性:せい:Nature,Gender@女性:じょせい:Woman / female;男性:だんせい:Man / male;性質:せいしつ:Nature / property / character;個性:こせい:Individuality / personality|的:てき:Target,ic@目的:もくてき:Purpose / goal;的確:てきかく:Precise / accurate;標的:ひょうてき:Target / mark;的中:てきちゅう:Hitting the mark|形:かたち:Shape,Form@形式:けいしき:Form / formality;人形:にんぎょう:Doll / puppet;図形:ずけい:Figure / graphic shape;形勢:けいせい:Situation / condition|状:じょう:Condition,Form,Letter@状況:じょうきょう:Situation / circumstances;状態:じょうたい:State / condition;賞状:しょうじょう:Certificate of merit / prize;症状:しょうじょう:Symptoms / condition|態:たい:Condition,State,Appearance@態度:たいど:Attitude / manner;状態:じょうたい:State / condition;事態:じたい:Situation / state of affairs;形態:けいたい:Form / shape / morphology|度:ど:Degree,Time,Occurrence@温度:おんど:Temperature;態度:たいど:Attitude;程度:ていど:Degree / amount;度数:どすう:Frequency / number of degrees|量:りょう:Quantity,Amount@数量:すうりょう:Quantity / volume;重量:じゅうりょう:Weight;大量:たいりょう:Massive / large quantity;分量:ぶんりょう:Amount / portion|測:はか:Measure,Fathom@測定:そくてい:Measurement;予測:よそく:Prediction / forecast;観測:かんそく:Observation / survey;計測:けいそく:Measurement / instrumentation|規:き:Standard,Measure@規則:きそく:Rules / regulations;規模:きぼ:Scale / scope;規律:きりつ:Discipline / order;規定:きてい:Regulation / provisions|則:そく:Rule,Law@規則:きそく:Rule / regulation;法則:ほうそく:Law / rule / principle;反則:はんそく:Foul / rule violation;原則:げんそく:General rule / principle|差:さ:Difference,Margin@差別:さべつ:Discrimination / distinction;誤差:ごさ:Error / margin of error;格差:かくさ:Disparity / gap;時差:じさ:Time difference|残:のこ:Remain,Leftover@残業:ざんぎょう:Overtime work;残念:ざんねん:Regrettable / disappointing;残暑:ざんしょ:Late summer heat;残高:ざんだか:Balance / remainder|額:ひたい:Amount,Forehead,Frame@金額:きんがく:Amount of money;額面:がくめん:Face value / par value;総額:そうがく:Total amount / sum;半額:はんがく:Half price / half amount|税:ぜい:Tax@税金:ぜいきん:Tax / duty;免税:めんぜい:Tax exemption / duty-free;減税:げんぜい:Tax reduction;増税:ぞうぜい:Tax increase|費:ひ:Expense,Cost@費用:ひよう:Cost / expense;消費:しょうひ:Consumption / spending;会費:かいひ:Membership fee;学費:がくひ:Tuition / school expenses|割:わり:Proportion,Divide,Cut@割合:わりあい:Ratio / proportion;役割:やくわり:Role / part;割引:わりびき:Discount;分割:ぶんかつ:Division / split / partition|益:えき:Benefit,Profit@利益:りえき:Profit / gains / benefit;有益:ゆうえき:Beneficial / profitable;収益:しゅうえき:Earnings / revenue;益虫:えきちゅう:Beneficial insect|財:ざい:Property,Wealth,Finance@財産:ざいさん:Property / fortune / assets;財布:さいふ:Wallet / purse;財政:ざいせい:Public finance / financial affairs;財界:ざいかい:Financial circles / business world|貧:まず:Poor,Poverty@貧困:ひんこん:Poverty / penury;貧血:ひんけつ:Anemia;貧乏:びんぼう:Poor / poverty-stricken;貧弱:ひんじゃく:Poor / meager / frail|富:とみ:Rich,Wealth@豊富:ほうふ:Abundant / plentiful;富豪:ふごう:Wealthy person / millionaire;貧富:ひんぷ:Rich and poor;富裕:ふゆう:Wealthy / rich|技:わざ:Skill,Art,Craft@技術:ぎじゅつ:Technique / technology;特技:とくぎ:Special skill / specialty;演技:えんぎ:Acting / performance;競技:きょうぎ:Game / match / contest|能:のう:Ability,Talent,Skill@能力:のうりょく:Ability / capability;可能:かのう:Possible;才能:さいのう:Talent / gift;機能:きのう:Function / feature|術:じゅつ:Art,Technique,Method@手術:しゅじゅつ:Surgical operation;美術:びじゅつ:Fine art;技術:ぎじゅつ:Technique / engineering;学術:がくじゅつ:Science / learning|造:つく:Create,Make,Structure@構造:こうぞう:Structure / construction;造船:ぞうせん:Shipbuilding;製造:せいぞう:Manufacture / production;改造:かいぞう:Remodeling / modification|設:もう:Establish,Setup@建設:けんせつ:Construction;設計:せっけい:Plan / design;施設:しせつ:Facility / institution;設定:せってい:Establishment / settings|備:そな:Equip,Provision,Preparation@準備:じゅんび:Preparation / arrangements;設備:せつび:Equipment / facilities;警備:けいび:Defense / guard;備品:びひん:Fixtures / furnishings|容:よう:Contain,Form,Looks@内容:ないよう:Contents / detail;容易:ようい:Easy / simple;容器:ようき:Container / vessel;美容:びよう:Beauty care|難:むずか:Difficult,Trouble,Hardship@困難:こんなん:Difficulty / distress;避難:ひなん:Evacuation / refuge;有難:ありがた:Grateful / thankful;災難:さいなん:Calamity / misfortune|普:ふ:Universal,General,Normal@普通:ふつう:Ordinary / normal / local train;普及:ふきゅう:Spread / popularization;普遍:ふへん:Universal / ubiquitous;普請:ふしん:Construction work / building|雑:ざつ:Miscellaneous,Mixed,Rough@雑誌:ざっし:Magazine / journal;複雑:ふくざつ:Complex / complicated;混雑:こんざつ:Congestion / crowding;雑談:ざつだん:Chatting / idle talk|単:たん:Simple,Single@簡単:かんたん:Simple / easy;単語:たんご:Word / vocabulary;単位:たんい:Unit / credit;単身:たんしん:Alone / away from home|複:ふく:Duplicate,Multiple,Compound@複雑:ふくざつ:Complex / complicated;複数:ふくすう:Plural / multiple;複製:ふくせい:Reproduction / duplicate;複利:ふくり:Compound interest|全:まった:Whole,Entire,All@全部:ぜんぶ:All / entirety;完全:かんぜん:Perfection / completeness;全員:ぜんいん:All members / everyone;安全:あんぜん:Safety / security|満:み:Full,Satisfy@満足:まんぞく:Satisfaction;満員:まんいん:Full house / packed;満月:まんげつ:Full moon;未満:みまん:Less than / insufficient|欠:か:Lack,Gap,Defect@欠席:けっせき:Absence;欠点:けってん:Defect / weak point;欠格:けっかく:Disqualification;欠陥:けっかん:Defect / fault|突:つ:Stab,Protruding,Thrust@突然:とつぜん:Abrupt / sudden;煙突:えんとつ:Chimney;衝突:しょうとつ:Collision / clash;突進:とっしん:Rush / dash|偶:ぐう:Accidental,Even number@偶然:ぐうぜん:By chance / unexpectedly;偶数:ぐうすう:Even number;配偶:はいぐう:Spouse / pairing;偶発:ぐうはつ:Accidental / incidental|既:すで:Already,Previously@既成:きせい:Established / existing;既婚:きこん:Married;既定:きてい:Fixed / predetermined;既製:きせい:Ready-made|未:み:Not yet,Un@未来:みらい:Future;未満:みまん:Under / less than;未定:みてい:Undecided / pending;未完:みかん:Incomplete|完:かん:Perfect,Completion,End@完全:かんぜん:Perfection / completeness;完了:かんりょう:Completion / conclusion;完成:かんせい:Complete / completion;完結:かんけつ:Conclusion / completion|類:るい:Sort,Kind,Class@種類:しゅるい:Variety / kind;書類:しょるい:Documents / official papers;分類:ぶんるい:Classification;人類:じんるい:Mankind / humanity",
+    11: "察:さつ:Guess,Presume,Judge@警察:けいさつ:Police;観察:かんさつ:Observation / survey;診察:しんさつ:Medical examination;視察:しさつ:Inspection / observation tour|念:ねん:Thought,Idea,Desire@残念:ざんねん:Regret / disappointment;記念:きねん:Commemoration / memorial;専念:せんねん:Dedication / concentration;理念:りねん:Idea / philosophy / concept|存:そん:Exist,Suppose,Be aware of@存在:そんざい:Existence / being;保存:ほぞん:Preservation / storage;生存:せいぞん:Survival;存続:そんぞく:Continuance / duration|希:き:Hope,Beg,Rare@希望:きぼう:Hope / wish;希求:ききゅう:Aspiration / desire;希薄:きはく:Thin / dilute / rare;希少:きしょう:Scarce / rare|愛:あい:Love,Affection@恋愛:れんあい:Love / romance;愛情:あいじょう:Love / affection;愛読:あいどく:Favorite reading;愛用:あいよう:Habitual use / favorite|憎:にく:Hate,Detest@愛憎:あいぞう:Love and hatred;憎悪:ぞうお:Hatred / abhorrence;怨憎:おんぞう:Enmity / grudge;憎念:ぞうねん:Feeling of hatred|恨:うら:Grudge,Resentment@痛恨:つうこん:Deep regret / bitter sorrow;怨恨:えんこん:Grudge / resentment;遺恨:いこん:Ill will / grudge;悔恨:かいこん:Remorse / regret|録:ろく:Record,Transcript@記録:きろく:Record / document;登録:とうろく:Registration;録音:ろくおん:Audio recording;目録:もくろく:Catalogue / list|述:の:State,Mention,Express@記述:きじゅつ:Description / statement;陳述:ちんじゅつ:Statement / declaration;口述:こうじゅつ:Dictation / oral statement;前述:ぜんじゅつ:Above-mentioned / aforesaid|論:ろん:Theory,Argument,Discuss@論文:ろんぶん:Thesis / essay / paper;議論:ぎろん:Argument / discussion;結論:けつろん:Conclusion;理論:りろん:Theory|評:ひょう:Evaluate,Criticism@評価:ひょうか:Evaluation / valuation;評判:ひょうばん:Reputation / fame;批評:ひひょう:Criticism / critique;好評:こうひょう:Popularity / favorable review|判:はん:Judge,Decide,Stamp@判断:はんだん:Judgment / decision;裁判:さいばん:Trial / judgment;判決:はんけつ:Judicial verdict;評判:ひょうばん:Reputation|導:みちび:Guide,Lead@指導:しどう:Guidance / leadership;導入:どうにゅう:Introduction / installation;誘導:ゆうどう:Guidance / inducement;導火:どうか:Ignition / fusing|示:しめ:Show,Indicate@指示:しじ:Instruction / order;表示:ひょうじ:Display / representation;暗示:あんじ:Hint / suggestion;提示:ていじ:Presentation / exhibit|表:おもて:Surface,Table,Express@代表:だいひょう:Representative;表現:ひょうげん:Expression / representation;発表:はっぴょう:Announcement;表面:ひょうめん:Surface / face|現:あらわ:Present,Existing,Appear@現代:げんだい:Present day / modern times;現在:げんざい:Present time / current;現象:げんしょう:Phenomenon;実現:じつげん:Realization / materialization|象:ぞう:Elephant,Phenomenon,Image@象徴:しょうちょう:Symbol / emblem;対象:たいしょう:Target / object;印象:いんしょう:Impression;気象:きしょう:Weather / meteorology|敬:うやま:Respect,Honor@敬語:けいご:Honorific language;尊敬:そんけい:Respect / esteem;敬意:けいい:Respect / honor;敬礼:けいれい:Salute / bow|尊:とうと:Revere,Valuable,Noble@尊重:そんちょう:Respect / esteem;自尊:じそん:Self-respect;尊大:そんだい:Haughty / arrogant;尊厳:そんげん:Dignity / sanctity|礼:れい:Manners,Bow,Gratitude@礼儀:れいぎ:Manners / courtesy;失礼:しつれい:Rudeness / excuse me;礼拝:れいはい:Worship / adoration;朝礼:ちょうれい:Morning assembly|拝:おが:Worship,Adore,Pray@拝見:はいけん:Seeing / looking at (humble);参拝:さんぱい:Worship / shrine visit;拝借:はいしゃく:Borrowing (humble);崇拝:すうはい:Worship / adoration|儀:ぎ:Ceremony,Rule,Affair@儀式:ぎしき:Ceremony / rite;礼儀:れいぎ:Manners / etiquette;行儀:ぎょうぎ:Manners / behavior;儀礼:ぎれい:Etiquette / courtesy|産:う:Produce,Give birth,Native@産業:さんぎょう:Industry;生産:せいさん:Production / manufacture;財産:ざいさん:Property / fortune;産地:さんち:Producing area|注:そそ:Pour,Note,Focus@注意:ちゅうい:Caution / attention;注文:ちゅうもん:Order / request;注目:ちゅうもく:Notice / attention;注射:ちゅうしゃ:Injection / shot|特:とく:Special@特別:とくべつ:Special / extraordinary;特徴:とくちょう:Feature / characteristic;独特:どくとく:Peculiar / unique;特有:とくゆう:Characteristic / peculiar|台:だい:Stand,Pedestal,Machine counter@台風:たいふう:Typhoon;舞台:ぶたい:Stage / scene;土台:どだい:Foundation / base;台所:だいどころ:Kitchen|康:こう:Ease,Peace,Health@健康:けんこう:Health;康健:こうけん:Good health / robust;安康:あんこう:Peace and good health;平康:へいこう:Peace / tranquility|介:かい:Mediate,Help,Care@紹介:しょうかい:Introduction;介助:かいじょ:Caregiving / assistance;介入:かいにゅう:Intervention;仲介:ちゅうかい:Intermediation / agency|去:さ:Leave,Past,Quit@過去:かこ:The past;去年:きょねん:Last year;死去:しきょ:Death / passing away;退去:たいきょ:Departure / evacuation|映:うつ:Reflect,Project@映画:えいが:Movie / film;反映:はんえい:Reflection / influence;上映:じょうえい:Screening / showing a film;映像:えいぞう:Image / video|声:こえ:Voice@声優:せいゆう:Voice actor;大声:おおごえ:Loud voice;歌声:うたごえ:Singing voice;音声:おんせい:Voice / audio|弓:ゆみ:Bow (archery)@弓道:きゅうどう:Japanese archery;弓矢:ゆみや:Bow and arrow;歩弓:ほきゅう:Foot archery;大弓:おおゆみ:Longbow|婚:こん:Marriage@結婚:けっこん:Marriage;離婚:りこん:Divorce;新婚:しんこん:Newlywed;求婚:きゅうこん:Marriage proposal|姓:せい:Surname@姓名:せいめい:Full name;同姓:どうせい:Same surname;改姓:かいせい:Changing surname;百姓:ひゃくしょう:Farmer / peasant|齢:れい:Age@年齢:ねんれい:Age;高齢:こうれい:Advanced age;老齢:ろうれい:Old age;学齢:がくれい:School age|殿:との:Hall,Mansion,Lord@宮殿:きゅうでん:Palace;神殿:しんでん:Temple / sacred shrine;沈殿:ちんでん:Precipitation / settlement;本殿:ほんでん:Main shrine building|紹:しょう:Introduce@紹介:しょうかい:Introduction;紹述:しょうじゅつ:Carrying on / expounding;媒紹:ばいしょう:Matchmaking / introduction;紹復:しょうふく:Inheriting / continuing|暮:く:Livelihood,Evening@日暮:ひぐらし:Sunset / dusk;歳暮:せいぼ:Year-end gift;夕暮:ゆうぐれ:Evening / twilight;暮春:ぼしゅん:Late spring|努:つと:Toil,Diligent,Effort@努力:どりょく:Effort / endeavor;努努:ゆめゆめ:Never / by no means;勉努:べんど:Diligence / working hard;労努:ろうど:Labor / effort|豊:ゆた:Bountiful,Plentiful,Rich@豊富:ほうふ:Abundant / plentiful;豊作:ほうさく:Bumper crop;豊満:ほうまん:Plump / voluptuous;豊年:ほうねん:Year of abundance|陽:よう:Sunshine,Yang,Positive@太陽:たいよう:Sun;陽気:ようき:Cheerful / weather;陽性:ようせい:Positive (test result);夕陽:ゆうひ:Setting sun|球:たま:Sphere,Ball@野球:やきゅう:Baseball;地球:ちきゅう:Earth / the globe;球場:きゅうじょう:Baseball stadium / field;電球:でんきゅう:Light bulb|燃:も:Burn,Blaze@燃料:ねんりょう:Fuel;燃焼:ねんしょう:Combustion / burning;不燃:ふねん:Incombustible;可燃:かねん:Combustible / flammable|農:のう:Farming,Agriculture@農業:のうぎょう:Agriculture / farming;農村:のうそん:Farming village;農民:のうみん:Peasant / farmer;農産:のうさん:Agricultural products|震:ふる:Quake,Shake@地震:じしん:Earthquake;震度:しんど:Seismic intensity;震災:しんさい:Earthquake disaster;激震:げきしん:Severe earthquake|災:わざわ:Disaster,Calamity@災害:さいがい:Disaster / calamity;火災:かさい:Fire disaster / conflagration;震災:しんさい:Earthquake disaster;防災:ぼうさい:Disaster prevention|害:がい:Harm,Injury@被害:ひがい:Damage / harm;害虫:がいちゅう:Harmful insect / pest;障害:しょうがい:Obstacle / disability;損害:そんがい:Damage / loss|燥:そう:Parched,Dry@乾燥:かんそう:Dryness / aridity;枯燥:こそう:Withering / desiccating;燥熱:そうねつ:Dry heat;高燥:こうそう:High and dry|吹:ふ:Blow,Breathe@吹雪:ふぶき:Blizzard / snowstorm;吹鳴:すいめい:Blowing a whistle / sounding;鼓吹:こすい:Advocacy / encouragement;吹奏:すいそう:Wind instrument playing|液:えき:Fluid,Liquid@液体:えきたい:Liquid / fluid;血液:けつえき:Blood;溶液:ようえき:Solution / liquid;乳液:にゅうえき:Milky lotion / emulsion",
+    12: "交:まじ:Mix,Intersect,Exchange@交通:こうつう:Traffic / transport;外交:がいこう:Diplomacy;交番:こうばん:Police box;交換:こうかん:Exchange|資:し:Assets,Resources,Capital@資料:しりょう:Materials / data;資源:しげん:Resources;資本:しほん:Capital / funds;資格:しかく:Qualification / credentials|運:はこ:Carry,Transport,Luck@運動:うんどう:Motion / exercise;運転:うんてん:Operation / driving;運命:うんめい:Fate / destiny;幸運:こううん:Good fortune / lucky|楽:たの:Music,Comfort,Fun@音楽:おんがく:Music;気楽:きらく:Carefree / comfortable;娯楽:ごらく:Amusement / entertainment;楽器:がっき:Musical instrument|組:くみ:Assemble,Put together,Group@組合:くみあい:Association / union;組織:そしき:Organization / structure;番組:ばんぐみ:TV or radio program;組曲:くみきょく:Suite (music)|車:くるま:Car,Vehicle,Wheel@電車:でんしゃ:Electric train;車両:しゃりょう:Rolling stock / vehicle;車道:しゃどう:Roadway / carriage way;車輪:しゃりん:Vehicle wheel|字:じ:Character,Letter,Word@漢字:かんじ:Chinese character / kanji;文字:もじ:Letter / character;赤字:あかじ:Deficit / in the red;黒字:くろじ:Surplus / in the black|病:やまい:Illness,Sickness@病院:びょういん:Hospital;病気:びょうき:Illness / sickness;急病:きゅうびょう:Sudden illness;持病:じびょう:Chronic disease|歌:うた:Song,Sing@歌手:かしゅ:Singer;国歌:こっか:National anthem;歌詞:かし:Song lyrics;校歌:こうか:School song|局:きょく:Bureau,Office,Board@局長:きょくちょう:Bureau director;薬局:やっきょく:Pharmacy / drugstore;局面:きょくめん:Situation / phase;結局:けっきょく:After all / in the end|健:すこ:Healthy,Health@健康:けんこう:Health;健全:けんぜん:Wholesome / sound;保健:ほけん:Health preservation / hygiene;剛健:ごうけん:Robust / sturdy|音:おと:Sound,Noise@音楽:おんがく:Music;発音:はつおん:Pronunciation;録音:ろくおん:Audio recording;本音:ほんね:Real intention / true feelings|旅:たび:Travel,Trip@旅行:りょこう:Travel / trip;旅館:りょかん:Japanese style inn;旅費:りょひ:Travel expenses;旅程:りょてい:Itinerary|勉:べん:Endeavor,Effort@勉強:べんきょう:Study / diligence;勤勉:きんべん:Diligent / hard-working;勉励:べんれい:Diligence / working hard;勉学:べんがく:Study / pursuit of learning|善:よ:Good,Virtuous@善良:ぜんりょう:Good / virtuous;改善:かいぜん:Improvement / reform;親善:しんぜん:Friendship / goodwill;偽善:ぎぜん:Hypocrisy|療:りょう:Heal,Cure,Medical treatment@治療:ちりょう:Medical treatment;療養:りょうよう:Recuperation / medical care;医療:いりょう:Medical care / service;診療:しんりょう:Medical examination and treatment|防:ふせ:Defend,Protect,Prevent@防止:ぼうし:Prevention;消防:しょうぼう:Firefighting / fire prevention;防衛:ぼうえい:Defense;国防:こくぼう:National defense|救:すく:Save,Rescue@救急:きゅうきゅう:First aid / emergency;救済:きゅうさい:Relief / rescue;救助:きゅうじょ:Rescue / aid;救命:きゅうめい:Lifesaving|護:ご:Safeguard,Protect@保護:ほご:Protection / custody;看護:かんご:Nursing;弁護:べんご:Defense / pleading;介護:かいご:Nursing care|衛:えい:Defense,Protection@衛星:えいせい:Satellite;防衛:ぼうえい:Defense;自衛:じえい:Self-defense;護衛:ごえい:Guard / escort|視:し:See,Look at,Vision@視力:しりょく:Eyesight / visual acuity;視覚:しかく:Sense of sight / vision;重視:じゅうし:Attaching importance / emphasis;無視:むし:Disregard / ignoring|査:さ:Investigate,Inspect@調査:ちょうさ:Investigation / survey;検査:けんさ:Inspection / audit;審査:しんさ:Judging / screening;捜査:そうさ:Criminal investigation / search|検:けん:Examine,Inspect@検討:けんとう:Consideration / examination;検索:けんさく:Search / retrieval;車検:しゃけん:Vehicle inspection;点検:てんけん:Inspection / checkup|証:しょう:Evidence,Proof,Certificate@証明:しょうめい:Proof / certification;保証:ほしょう:Guarantee / warranty;証拠:しょうこ:Evidence / proof;実証:じっしょう:Actual proof / verification|可:か:Possible,Acceptable,Can@可能:かのう:Possible / potential;許可:きょか:Permission / permit;不可:ふか:Impossible / unacceptable;可決:かけつ:Approval / adoption|否:いな:No,Negate,Decline@拒否:きょひ:Refusal / rejection;否定:ひてい:Denial / negation;賛否:さんぴ:Yes and no / for and against;安否:あんぴ:Safety / welfare|定:さだ:Determine,Fix,Decide@予定:よてい:Schedule / plan;決定:けってい:Decision;定期:ていき:Fixed term / regular;定価:ていか:List price / regular price|断:ことわ:Cut off,Decide,Refuse@判断:はんだん:Judgment / decision;決断:けつだん:Decision / resolve;横断:おうだん:Crossing / traversal;断水:だんすい:Water outage|案:あん:Plan,Idea,Draft@提案:ていあん:Proposal / suggestion;案内:あんない:Guidance / information;答案:とうあん:Exam examination paper;法案:ほうあん:Bill / legislative measure|件:けん:Matter,Case,Affair@事件:じけん:Incident / case / event;条件:じょうけん:Condition / term;用件:ようけん:Business / matter;案件:あんけん:Matter / item on agenda|条:じょう:Clause,Article@条件:じょうけん:Condition / terms;条約:じょうやく:Treaty / pact;箇条:かじょう:Item / clause;条文:じょうぶん:Text of regulations / articles|許:ゆる:Permit,Allow@許可:きょか:Permission / approval;免許:めんきょ:License / permit;特許:とっきょ:Patent;容許:ようきょ:Permission / tolerance|置:お:Put,Place@位置:いち:Position / location;装置:そうち:Equipment / device / installation;設置:せっち:Establishment / installation;処置:しょち:Treatment / measure|標:ひょう:Mark,Sign,Target@目標:もくひょう:Objective / target;標準:ひょうじゅん:Standard / norm;標高:ひょうこう:Elevation / altitude;標識:ひょうしき:Sign / marker|志:こころざし:Intention,Will,Motive@意志:いし:Will / intention;志望:しぼう:Wish / desire / aspiration;志気:しき:Morale / spirit;初志:しょし:Original intention|参:まい:Participate,Visit@参加:さんか:Participation / joining;参考:さんこう:Reference / consultation;参観:さんかん:Inspection / visit;参拝:さんぱい:Worship / visit to a shrine|共:とも:Together,Both@共通:きょうつう:Common / shared;共同:きょうどう:Joint / shared;公共:こうきょう:Public / communal;共感:きょうかん:Empathy / sympathy|協:きょう:Cooperation,Co@協力:きょうりょく:Cooperation / collaboration;妥協:だきょう:Compromise;協会:きょうかい:Association / society;協議:きょうぎ:Conference / consultation|効:き:Effect,Efficacy,Merit@効果:こうか:Effect / efficacy / result;有効:ゆうこう:Valid / effective;効率:こうりつ:Efficiency;効力:こうりょく:Effect / efficacy / validity|結:むす:Tie,Bind,Conclude@結果:けっか:Result / outcome;結婚:けっこん:Marriage;結論:けつろん:Conclusion;結末:けつまつ:End / conclusion|因:よ:Cause,Factor@原因:げんいん:Cause / origin;要因:よういん:Main factor / primary cause;死因:しいん:Cause of death;因縁:いんねん:Fate / destiny / connection|由:よし:Reason,Origin@自由:じゆう:Freedom / liberty;理由:りゆう:Reason / pretext;経由:けいゆ:Via / by way of;来由:らいゆう:Origin / source|河:かわ:River@河川:かせん:Rivers;運河:うんが:Canal / waterway;銀河:ぎんが:Galaxy / the Milky Way;黄河:こうが:Yellow River|流:なが:Flow,Current@流行:りゅうこう:Fashion / epidemic;交流:こうりゅう:Interchange / interaction;一流:いちりゅう:First-class / top-tier;合流:ごうりゅう:Confluence / merging|浴:あ:Bathe,Bask in@水浴:すいよく:Bathing / cold dip;浴場:よくじょう:Public bathhouse / bath;入浴:にゅうよく:Taking a bath;沐浴:もくよく:Ablution / bathing|正:ただ:Correct,Right,Just@正直:しょうじき:Honest / frank;正月:しょうがつ:New Year;正確:せいかく:Accurate / correct;正解:せいかい:Correct answer|角:かど:Corner,Angle,Horn@三角:さんかく:Triangle;四角:しかく:Square;方角:ほうがく:Direction / compass point;角度:かくど:Angle|丸:まる:Round,Circle,Whole@丸薬:がんやく:Pill / tablet;弾丸:だんがん:Bullet;砲丸:ほうがん:Cannonball / shot;丸太:まるた:Log|絵:え:Picture,Painting,Drawing@絵画:かいが:Painting / picture;油絵:あぶらえ:Oil painting;絵本:えほん:Picture book;挿絵:さしえ:Illustration / cut|図:ず:Map,Diagram,Plan@地図:ちず:Map;図面:ずめん:Drawing / blueprint / plan;合図:あいず:Signal / sign;意図:いと:Intention / aim",
+    13: "各:おのおの:Each,Every@各自:かくじ:Each person / respectively;各国:かっこく:Each nation / all countries;各位:かくい:Everyone / ladies and gentlemen;各地:かくち:Every place / various parts|互:たが:Mutual,Reciprocal@相互:そうご:Mutual / reciprocal;交互:こうご:Alternate / reciprocal;互角:ごかく:Even / well-matched;互換:ごかん:Interchangeable / compatible|絡:から:Entwine,Contact@連絡:れんらく:Contact / communication;脈絡:みゃくらく:Chain of reasoning / context;短絡:たんらく:Short circuit / jump to conclusion;絡線:らくせん:Coils / wiring|似:に:Resemble,Similar@類似:るいじ:Resemblance / similarity;真似:まね:Imitation / mimicry;酷似:こくじ:Close resemblance;疑似:ぎじ:Pseudo / quasi / mock|鳴:な:Chirp,Ring,Sound@悲鳴:ひめい:Scream / shriek;共鳴:きょうめい:Resonance / sympathy;鳴動:めいどう:Rumble / humming;雷鳴:らいめい:Thunder peal|飾:かざ:Decorate,Ornament@装飾:そうしょく:Decoration / ornament;修飾:しゅうしょく:Modification / embellishment;過飾:かしょく:Overdecoration;服飾:ふくしょく:Attire / dress|帯:おび:Belt,Sash,Zone@地帯:ちたい:Area / zone / region;熱帯:ねったい:Tropics;連帯:れんたい:Solidarity;温帯:おんたい:Temperate zone|輪:わ:Ring,Wheel,Circle@車輪:しゃりん:Wheel;五輪:ごりん:The Olympics;指輪:ゆびわ:Ring (finger);年輪:ねんりん:Annual tree rings|湾:わん:Bay,Gulf@湾岸:わんがん:Bay coast / gulf;港湾:こうわん:Harbor / port;湾口:わんこう:Entrance of a bay;内湾:ないわん:Inlet / inner bay|丘:おか:Hill@丘陵:きゅうりょう:Hill / hillock;砂丘:さきゅう:Sand dune;丘頭:きゅうとう:Hilltop;丘原:きゅうげん:Hills and plains|坂:さか:Slope,Hill@登坂:とうはん:Climbing a slope;急坂:きゅうはん:Steep slope;坂道:さかみち:Sloping road / hill road;坂路:はんろ:Sloping path / ramp|沼:ぬま:Swamp,Bog@沼地:ぬまち:Swamp / marshland;泥沼:どろぬま:Bog / quagmire;湖沼:こしょう:Lakes and marshes;沼沢:しょうたく:Swamp / marsh|池:いけ:Pond@電池:でんち:Battery / cell;溜池:ためいけ:Reservoir / pond;池畔:ちはん:Pond edge;古池:ふるいけ:Old pond|田:た:Rice field@水田:すいでん:Paddy field;油田:ゆでん:Oil field;田園:でんえん:Country / rural / fields;田畑:たはた:Fields and farms|芝:しば:Lawn,Grass@芝生:しばふ:Lawn / grass;芝居:しばい:Play / drama;芝草:しばくさ:Lawn grass;芝地:しばち:Turf ground / lawn|句:く:Phrase,Haiku@俳句:はいく:Haiku poetry;文句:もんく:Complaint / phrase;語句:ごく:Words / phrases;字句:じく:Words and phrases / text|詞:し:Word,Poetry@動詞:どうし:Verb;名詞:めいし:Noun;歌詞:かし:Lyrics;祝詞:のりと:Shinto ritual prayer|詩:し:Poem,Poetry@詩人:しじん:Poet;詩集:ししゅう:Collection of poems;作詩:さくし:Writing poetry;漢詩:かんし:Chinese poetry|誌:し:Magazine,Document@雑誌:ざっし:Magazine / journal;日誌:にっし:Daily journal / logbook;地誌:ちし:Topography / regional geography;会誌:かいし:Society journal|筆:ふで:Brush,Writing@筆記:ひっき:Taking notes / written;鉛筆:えんぴつ:Pencil;執筆:しっぴつ:Writing / authoring;直筆:じきひつ:One's own handwriting|筒:つつ:Cylinder,Tube,Pipe@封筒:ふうとう:Envelope;円筒:えんとう:Cylinder;水筒:すいとう:Water bottle / canteen;筒先:つつさき:Nozzle / gun barrel|封:ふう:Seal,Enclose@封筒:ふうとう:Envelope;同封:どうふう:Enclosure (in letter);封鎖:ふうさ:Blockade / sealing off;開封:かいふう:Opening an envelope / breaking seal|籍:せき:Register,Enrollment@国籍:こくせき:Nationality / citizenship;戸籍:こせき:Family register;在籍:ざいせき:Enrollment / being registered;本籍:ほんせき:Permanent domicile|辞:や:Resign,Word,Dictionary@辞書:じしょ:Dictionary;辞任:じにん:Resignation;世辞:せじ:Flattery / compliment;祝辞:しゅくじ:Congratulatory address|典:てん:Code,Ceremony,Reference@古典:こてん:Classic / classics;辞典:じてん:Dictionary;式典:しきてん:Ceremony / rite;典型:てんけい:Type / model / pattern|型:かた:Model,Type,Mold@大型:おおがた:Large size;小型:こがた:Small size;模型:もけい:Model / replica;原型:げんけい:Prototype / original model|版:はん:Edition,Printing block@初版:しょはん:First edition;出版:しゅっぱん:Publication / publishing;版画:はんが:Woodblock print / engraving;新版:しんばん:New edition|刷:す:Print@印刷:いんさつ:Printing;増刷:ぞうさつ:Additional printing;刷毛:はけ:Brush / paintbrush;重刷:じゅうさつ:Reprint|刊:かん:Publish,Edition@朝刊:ちょうかん:Morning newspaper edition;夕刊:ゆうかん:Evening edition;刊行:かんこう:Publication / issue;週刊:しゅうかん:Weekly publication|創:つく:Create,Originate@創造:そうぞう:Creation;創立:そうりつ:Establishment / founding;独創:どくそう:Originality / invention;創刊:そうかん:Launching a publication|製:せい:Manufacture,Make@製品:せいひん:Manufactured goods / product;製造:せいぞう:Manufacture / production;複製:ふくせい:Reproduction / duplicate;製薬:せいやく:Pharmaceutical manufacture|写:うつ:Copy,Photograph@写真:しゃしん:Photograph / photo;写生:しゃせい:Sketching / drawing from nature;複写:ふくしゃ:Copy / duplication;描写:びょうしゃ:Depiction / description|真:ま:True,Real@写真:しゃしん:Photograph;真相:しんそう:Truth / real situation;真実:しんじつ:Truth / reality;真理:しんり:Truth|像:ぞう:Image,Statue,Figure@画像:がぞう:Image / picture;映像:えいぞう:Video / image / reflection;想像:そうぞう:Imagination / guess;銅像:どうぞう:Bronze statue|展:てん:Unfold,Exhibit,Expand@発展:はってん:Development / growth;展示:てんじ:Exhibition / display;展開:てんかい:Development / deployment;進展:しんてん:Progress / advance|影:かげ:Shadow,Silhouette@影響:えいきょう:Influence / effect;撮影:さつえい:Photographing / filming;幻影:げんえい:Illusion / phantom;陰影:いんえい:Shadow / nuance|響:ひび:Echo,Resound,Influence@影響:えいきょう:Influence / effect;音響:おんきょう:Acoustics / sound;反響:はんきょう:Echo / repercussion / response;響鳴:きょうめい:Resonance / echoing|劇:げき:Drama,Play@演劇:えんげき:Drama / theatre;悲劇:ひげき:Tragedy;喜劇:きげき:Comedy;劇場:げきじょう:Theatre / playhouse|舞:まい:Dance@舞台:ぶたい:Stage / scene;舞踊:ぶよう:Dancing / dance;見舞:みまい:Inquiry / visiting the sick;乱舞:らんぶ:Wild dance / boisterous dance|姿:すがた:Figure,Form,Appearance@姿勢:しせい:Posture / stance;容姿:ようし:Appearance / looks;姿態:したい:Attitude / posture / figure;後姿:うしろすがた:Appearance from behind|勢:いきお:Force,Vigor,Energy@姿勢:しせい:Posture / attitude;大勢:おおぜい:Many people / great crowd;勢力:せいりょく:Influence / power;情勢:じょうせい:Situation / conditions|担:にな:Shoulder,Bear@担当:たんとう:Being in charge;負担:ふたん:Burden / load;担任:たんにん:Homeroom teacher / in charge;担保:たんぽ:Collateral / security|任:まか:Responsibility,Entrust@責任:せきにん:Duty / responsibility;主任:しゅにん:Person in charge / senior;信任:しんにん:Trust / confidence;任務:にんむ:Mission / duty|退:しりぞ:Retire,Retreat,Withdraw@引退:いんたい:Retirement;退院:たいいん:Discharge from hospital;後退:こうたい:Retreat / backsliding;衰退:すいたい:Decline / decay|昇:のぼ:Rise,Ascend@上昇:じょうしょう:Rise / ascent;昇進:しょうしん:Promotion;昇給:しょうきゅう:Pay raise;昇降:しょうこう:Ascending and descending|就:つ:Settle in,Take position@就職:しゅうしょく:Finding employment;就任:しゅうにん:Inauguration / assumption of office;就寝:しゅうしん:Going to bed;成就:じょうじゅ:Fulfillment / realization|販:はん:Sell,Marketing@販売:はんばい:Sales / marketing;市販:しはん:Commercial / on the market;通販:つうはん:Mail order / online shopping;販路:はんろ:Market / sales channel|購:こう:Purchase,Buy@購入:こうにゅう:Purchase / buying;購買:こうばい:Purchase / procurement;購読:こうどく:Subscription (reading);購求:こうきゅう:Purchase / buying|値:ね:Price,Value@値段:ねだん:Price / cost;価値:かち:Value / worth;数値:すうち:Numerical value;安値:やすね:Low price|文:ぶん:Sentence,Text,Literature@文学:ぶんがく:Literature;文化:ぶんか:Culture / civilization;作文:さくぶん:Composition / essay;文字:もじ:Letter / character"
 };
 
 // Global State
 let kanjiDB = {};
-let allMeaningsPool = [];
 let allKanjiFlat = [];
+let allCompoundsPool = [];
+let allCompoundMeanings = [];
 let currentCategory = 1;
 let currentList = [];
 let currentIndex = 0;
-let testModeActive = false;
+let currentSubStep = 0; // 0 = Base Kanji, 1..N = Compound words of current kanji
+
+// Completed tracking: completedSubSteps[cat_index_substep] = true
+let completedSteps = {};
+
+// HanziWriter instances
+let baseWriter = null;
+let compWriter1 = null;
+let compWriter2 = null;
+let compChar1Done = false;
+let compChar2Done = false;
+
+// Quiz State
 let testScore = 0;
 let testQuestions = [];
+let mcqCurrentCompound = null;
+let mcqState = "answering"; // answering, answered
 
-let writer; // HanziWriter instance
+// Escape HTML utility
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
 
 // Parse Data 
 function initDB() {
+    allKanjiFlat = [];
+    allCompoundsPool = [];
+    
     for (let cat = 1; cat <= 13; cat++) {
         kanjiDB[cat] = [];
-        let pairs = rawData[cat].split("|");
-        pairs.forEach(p => {
-            let parts = p.split(":");
-            let char = parts[0];
-            let furigana = parts[1];
-            let meanings = parts[2].split(",");
-            kanjiDB[cat].push({ char, furigana, meanings });
-            allKanjiFlat.push({ char, furigana, meanings, cat });
-            allMeaningsPool.push(...meanings);
+        let items = rawData[cat].split("|");
+        items.forEach(p => {
+            let [kanjiPart, compoundsPart] = p.split("@");
+            let [char, furigana, meaningsStr] = kanjiPart.split(":");
+            let meanings = meaningsStr ? meaningsStr.split(",") : [];
+            let compounds = [];
+            if (compoundsPart) {
+                compoundsPart.split(";").forEach(c => {
+                    let [word, reading, meaning] = c.split(":");
+                    if (word && reading && meaning) {
+                        let compObj = { word, reading, meaning, kanjiChar: char };
+                        compounds.push(compObj);
+                        allCompoundsPool.push(compObj);
+                    }
+                });
+            }
+            let entry = { char, furigana, meanings, compounds, cat };
+            kanjiDB[cat].push(entry);
+            allKanjiFlat.push(entry);
         });
     }
-    allMeaningsPool = [...new Set(allMeaningsPool)];
+    allCompoundMeanings = [...new Set(allCompoundsPool.map(c => c.meaning))];
 }
 
 // Core Navigation
@@ -330,7 +650,7 @@ function setMode(mode) {
     document.getElementById('mcqMode').classList.remove('active');
     document.getElementById('testMode').classList.remove('active');
 
-    if(mode === 'practice') {
+    if (mode === 'practice') {
         document.getElementById('btnPractice').classList.add('active');
         document.getElementById('practiceMode').classList.add('active');
         renderPractice();
@@ -345,90 +665,353 @@ function loadCategory(catId) {
     currentCategory = parseInt(catId);
     currentList = kanjiDB[currentCategory];
     currentIndex = 0;
+    currentSubStep = 0;
     setMode('practice');
+}
+
+// Calculate responsive canvas sizes
+function getSingleCanvasSize() {
+    let container = document.getElementById('practiceMode');
+    let w = container ? container.clientWidth : 340;
+    let available = Math.min(w - 48, 300);
+    return Math.max(250, available);
+}
+
+function getDualCanvasSize() {
+    let container = document.getElementById('practiceMode');
+    let w = container ? container.clientWidth : 340;
+    let available = Math.min(w - 56, 380);
+    let size = Math.floor((available - 14) / 2);
+    return Math.max(128, Math.min(size, 175));
 }
 
 // Practice Mode Functions with HanziWriter
 function renderPractice() {
-    if(currentIndex >= currentList.length) currentIndex = 0;
+    if (currentIndex >= currentList.length) currentIndex = 0;
     let item = currentList[currentIndex];
+    let numCompounds = (item.compounds && item.compounds.length) || 0;
     
-    document.getElementById("pracFurigana").innerText = item.furigana;
-    document.getElementById("pracMeanings").innerText = item.meanings.join(", ");
-    document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length}`;
-    
-    // Clear old instance if it exists
-    document.getElementById('kanji-writer-target').innerHTML = '';
-    
-    // Create new interactive guided writer
-    writer = HanziWriter.create('kanji-writer-target', item.char, {
-        width: 320,
-        height: 320,
-        padding: 15,
-        strokeAnimationSpeed: 1.5,
-        delayBetweenStrokes: 100,
-        strokeColor: '#333333', // Ghost outline color
-        radicalColor: '#333333',
-        highlightColor: '#ff6161', // Color when you make a mistake
-        outlineColor: '#222222', // Very faint background shape
-        drawingColor: '#e53935', // Color of your tracing path (Red theme!)
-        drawingWidth: 15,
-        showHintAfterMisses: 1, // Show where to draw if they mess up
-        showOutline: true
-    });
-    
-    // Automatically start the interactive tracing quiz
-    writer.quiz(); 
-}
+    // Bounds check on currentSubStep
+    if (currentSubStep > numCompounds) currentSubStep = 0;
 
-function animateStrokeOrder() {
-    if (writer) {
-        // Show how to draw it, then restart the quiz mode
-        writer.animateCharacter({
+    // Build Stepper Navigation Pills
+    let stepperHtml = "";
+    let baseKey = `${currentCategory}_${currentIndex}_0`;
+    let isBaseDone = !!completedSteps[baseKey];
+    stepperHtml += `<div class="step-pill ${currentSubStep === 0 ? 'active' : ''} ${isBaseDone ? 'done' : ''}" onclick="jumpPracticeStep(0)">${item.char} (Base)</div>`;
+    
+    for (let i = 0; i < numCompounds; i++) {
+        let c = item.compounds[i];
+        let cKey = `${currentCategory}_${currentIndex}_${i + 1}`;
+        let isDone = !!completedSteps[cKey];
+        stepperHtml += `<div class="step-pill ${currentSubStep === (i + 1) ? 'active' : ''} ${isDone ? 'done' : ''}" onclick="jumpPracticeStep(${i + 1})">${i + 1}. ${c.word}</div>`;
+    }
+    document.getElementById("pracStepper").innerHTML = stepperHtml;
+
+    // Clear previous writer instances
+    baseWriter = null;
+    compWriter1 = null;
+    compWriter2 = null;
+    compChar1Done = false;
+    compChar2Done = false;
+
+    let stage = document.getElementById("pracCanvasStage");
+    let banner = document.getElementById("pracStatusBanner");
+    let btnPrev = document.getElementById("btnPrev");
+    let btnNext = document.getElementById("btnNext");
+
+    btnPrev.disabled = (currentIndex === 0 && currentSubStep === 0);
+
+    if (currentSubStep === 0) {
+        // --- BASE KANJI MODE ---
+        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Base Character`;
+        document.getElementById("pracFurigana").innerText = item.furigana;
+        document.getElementById("pracMeanings").innerText = item.meanings.join(", ");
+        banner.innerText = `Trace stroke order for "${item.char}"`;
+        banner.className = "trace-status-banner";
+
+        btnNext.innerText = `Next: 1. ${item.compounds[0] ? item.compounds[0].word : 'Compound'} ➔`;
+
+        let size = getSingleCanvasSize();
+        stage.innerHTML = `
+            <div class="single-canvas-container" style="width:${size}px; height:${size}px;">
+                <div id="base-writer-target" class="writer-target"></div>
+                <div class="canvas-label">TRACE BASE KANJI HERE</div>
+            </div>
+        `;
+
+        baseWriter = HanziWriter.create('base-writer-target', item.char, {
+            width: size,
+            height: size,
+            padding: 16,
+            strokeAnimationSpeed: 1.5,
+            delayBetweenStrokes: 100,
+            strokeColor: '#333333',
+            radicalColor: '#333333',
+            highlightColor: '#ff6161',
+            outlineColor: '#222222',
+            drawingColor: '#e53935',
+            drawingWidth: 15,
+            showHintAfterMisses: 1,
+            showOutline: true
+        });
+
+        baseWriter.quiz({
             onComplete: function() {
-                setTimeout(() => writer.quiz(), 1000);
+                completedSteps[baseKey] = true;
+                banner.innerText = `Base Kanji "${item.char}" Completed! ✨`;
+                banner.className = "trace-status-banner success";
+                renderStepperState();
+            }
+        });
+
+    } else {
+        // --- COMPOUND WORD TRACING MODE ---
+        let compIdx = currentSubStep - 1;
+        let comp = item.compounds[compIdx];
+
+        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Compound ${currentSubStep} / ${numCompounds}`;
+        document.getElementById("pracFurigana").innerText = comp.reading;
+        document.getElementById("pracMeanings").innerText = comp.meaning;
+        banner.innerText = `Trace compound: 1. ${comp.word[0]}  then  2. ${comp.word[1]}`;
+        banner.className = "trace-status-banner";
+
+        if (currentSubStep < numCompounds) {
+            btnNext.innerText = `Next: ${currentSubStep + 1}. ${item.compounds[currentSubStep].word} ➔`;
+        } else {
+            btnNext.innerText = `Next Kanji ➔`;
+        }
+
+        let cSize = getDualCanvasSize();
+        stage.innerHTML = `
+            <div class="dual-canvas-container">
+                <div id="box-char-1" class="char-box" style="width:${cSize}px; height:${cSize}px;">
+                    <div id="comp-writer-target-1" class="writer-target"></div>
+                    <div class="canvas-label">1. ${comp.word[0]}</div>
+                </div>
+                <div id="box-char-2" class="char-box" style="width:${cSize}px; height:${cSize}px;">
+                    <div id="comp-writer-target-2" class="writer-target"></div>
+                    <div class="canvas-label">2. ${comp.word[1]}</div>
+                </div>
+            </div>
+        `;
+
+        let hwOpts = {
+            width: cSize,
+            height: cSize,
+            padding: 12,
+            strokeAnimationSpeed: 1.5,
+            delayBetweenStrokes: 90,
+            strokeColor: '#333333',
+            radicalColor: '#333333',
+            highlightColor: '#ff6161',
+            outlineColor: '#222222',
+            drawingColor: '#e53935',
+            drawingWidth: 12,
+            showHintAfterMisses: 1,
+            showOutline: true
+        };
+
+        compWriter1 = HanziWriter.create('comp-writer-target-1', comp.word[0], hwOpts);
+        compWriter2 = HanziWriter.create('comp-writer-target-2', comp.word[1], hwOpts);
+
+        let cKey = `${currentCategory}_${currentIndex}_${currentSubStep}`;
+
+        compWriter1.quiz({
+            onComplete: function() {
+                compChar1Done = true;
+                let box1 = document.getElementById("box-char-1");
+                if (box1) box1.classList.add("completed");
+                checkCompoundBothDone(comp.word, cKey);
+            }
+        });
+
+        compWriter2.quiz({
+            onComplete: function() {
+                compChar2Done = true;
+                let box2 = document.getElementById("box-char-2");
+                if (box2) box2.classList.add("completed");
+                checkCompoundBothDone(comp.word, cKey);
             }
         });
     }
+
+    // Render the 4-5 compound words directly underneath
+    let compoundsHtml = "";
+    if (item.compounds && item.compounds.length > 0) {
+        item.compounds.forEach((c, idx) => {
+            let isActive = (currentSubStep === idx + 1);
+            let cKey = `${currentCategory}_${currentIndex}_${idx + 1}`;
+            let isDone = !!completedSteps[cKey];
+            let badgeText = isActive ? "Tracing Now" : (isDone ? "✓ Traced" : "Trace ➔");
+
+            compoundsHtml += `
+            <div class="compound-card ${isActive ? 'active-compound' : ''}" onclick="jumpPracticeStep(${idx + 1})">
+                <div class="compound-word-wrapper">
+                    <span class="compound-badge">${badgeText}</span>
+                    <ruby class="compound-word">${escapeHtml(c.word)}<rt>${escapeHtml(c.reading)}</rt></ruby>
+                </div>
+                <div class="compound-meaning">${escapeHtml(c.meaning)}</div>
+            </div>`;
+        });
+    }
+    document.getElementById("pracCompoundsList").innerHTML = compoundsHtml;
 }
 
-function nextPractice() {
-    currentIndex++;
+function renderStepperState() {
+    let item = currentList[currentIndex];
+    let numCompounds = (item.compounds && item.compounds.length) || 0;
+    let stepperHtml = "";
+    let baseKey = `${currentCategory}_${currentIndex}_0`;
+    let isBaseDone = !!completedSteps[baseKey];
+    stepperHtml += `<div class="step-pill ${currentSubStep === 0 ? 'active' : ''} ${isBaseDone ? 'done' : ''}" onclick="jumpPracticeStep(0)">${item.char} (Base)</div>`;
+    
+    for (let i = 0; i < numCompounds; i++) {
+        let c = item.compounds[i];
+        let cKey = `${currentCategory}_${currentIndex}_${i + 1}`;
+        let isDone = !!completedSteps[cKey];
+        stepperHtml += `<div class="step-pill ${currentSubStep === (i + 1) ? 'active' : ''} ${isDone ? 'done' : ''}" onclick="jumpPracticeStep(${i + 1})">${i + 1}. ${c.word}</div>`;
+    }
+    document.getElementById("pracStepper").innerHTML = stepperHtml;
+}
+
+function checkCompoundBothDone(word, cKey) {
+    let banner = document.getElementById("pracStatusBanner");
+    if (compChar1Done && compChar2Done) {
+        completedSteps[cKey] = true;
+        if (banner) {
+            banner.innerText = `Compound "${word}" Completed! ✨`;
+            banner.className = "trace-status-banner success";
+        }
+        renderStepperState();
+    } else if (compChar1Done) {
+        if (banner) banner.innerText = `1st Kanji complete! Now trace 2nd Kanji.`;
+    } else if (compChar2Done) {
+        if (banner) banner.innerText = `2nd Kanji complete! Now trace 1st Kanji.`;
+    }
+}
+
+function jumpPracticeStep(subStep) {
+    currentSubStep = subStep;
     renderPractice();
 }
 
-// MCQ Mode Functions (Requires Exact Multiple Matches)
-let mcqCorrectAnswers = [];
-let mcqState = "answering"; // answering, correct
+function prevPractice() {
+    if (currentSubStep > 0) {
+        currentSubStep--;
+    } else if (currentIndex > 0) {
+        currentIndex--;
+        let prevItem = currentList[currentIndex];
+        currentSubStep = (prevItem.compounds && prevItem.compounds.length) || 0;
+    }
+    renderPractice();
+}
 
+function nextPractice() {
+    let item = currentList[currentIndex];
+    let numCompounds = (item.compounds && item.compounds.length) || 0;
+    
+    if (currentSubStep < numCompounds) {
+        // Move to the compound word of the same kanji right after it!
+        currentSubStep++;
+    } else {
+        // Finished all compounds for this kanji -> advance to next kanji base!
+        currentIndex++;
+        currentSubStep = 0;
+        if (currentIndex >= currentList.length) {
+            currentIndex = 0;
+        }
+    }
+    renderPractice();
+}
+
+function animateStrokeOrder() {
+    if (currentSubStep === 0) {
+        if (baseWriter) {
+            baseWriter.animateCharacter({
+                onComplete: function() {
+                    setTimeout(() => { if (baseWriter) baseWriter.quiz(); }, 800);
+                }
+            });
+        }
+    } else {
+        if (compWriter1) {
+            compWriter1.animateCharacter({
+                onComplete: function() {
+                    if (compWriter2) {
+                        compWriter2.animateCharacter({
+                            onComplete: function() {
+                                setTimeout(() => {
+                                    if (compWriter1 && !compChar1Done) compWriter1.quiz();
+                                    if (compWriter2 && !compChar2Done) compWriter2.quiz();
+                                }, 800);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+}
+
+// MCQ Mode Functions (Tests Compound Words)
 function renderMCQ() {
-    if(currentIndex >= currentList.length) currentIndex = 0;
+    if (currentIndex >= currentList.length) currentIndex = 0;
     let item = currentList[currentIndex];
     
-    document.getElementById("mcqKanji").innerText = item.char;
-    document.getElementById("mcqFurigana").innerText = item.furigana;
+    // Randomly select one of the compound words belonging to the current kanji
+    let comps = item.compounds;
+    if (!comps || comps.length === 0) return;
+    mcqCurrentCompound = comps[Math.floor(Math.random() * comps.length)];
+    
+    document.getElementById("mcqKanji").innerText = mcqCurrentCompound.word;
+    document.getElementById("mcqFurigana").innerText = mcqCurrentCompound.reading;
     document.getElementById("mcqProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length}`;
     
-    mcqCorrectAnswers = item.meanings;
-    let options = [...mcqCorrectAnswers];
+    // 4 multiple-choice options (1 correct, 3 distractors)
+    let options = [mcqCurrentCompound.meaning];
     
-    while(options.length < 5) {
-        let randMeaning = allMeaningsPool[Math.floor(Math.random() * allMeaningsPool.length)];
-        if(!options.includes(randMeaning)) options.push(randMeaning);
+    // Gather candidate distractors from current category's compounds first
+    let catMeanings = [];
+    currentList.forEach(k => {
+        k.compounds.forEach(c => {
+            if (c.meaning !== mcqCurrentCompound.meaning && !catMeanings.includes(c.meaning)) {
+                catMeanings.push(c.meaning);
+            }
+        });
+    });
+    catMeanings.sort(() => 0.5 - Math.random());
+    for (let m of catMeanings) {
+        if (!options.includes(m)) {
+            options.push(m);
+            if (options.length === 4) break;
+        }
     }
     
-    options.sort(() => Math.random() - 0.5);
+    // Fallback to global pool if needed
+    if (options.length < 4) {
+        let globalPool = [...allCompoundMeanings].sort(() => 0.5 - Math.random());
+        for (let m of globalPool) {
+            if (!options.includes(m)) {
+                options.push(m);
+                if (options.length === 4) break;
+            }
+        }
+    }
+    
+    options.sort(() => 0.5 - Math.random());
     
     let optionsHtml = "";
     options.forEach((opt, idx) => {
-        optionsHtml += `<label class="mcq-option">
-            <input type="checkbox" value="${opt}" id="mcqOpt${idx}"> 
-            <span>${opt}</span>
+        optionsHtml += `<label class="mcq-option" id="mcqLabel${idx}" onclick="selectMCQOption(${idx})">
+            <input type="radio" name="mcqOption" value="${escapeHtml(opt)}" id="mcqOpt${idx}"> 
+            <span>${escapeHtml(opt)}</span>
         </label>`;
     });
     
     document.getElementById("mcqOptions").innerHTML = optionsHtml;
     document.getElementById("mcqFeedback").innerText = "";
+    document.getElementById("mcqFeedback").className = "feedback";
     
     let btn = document.getElementById("mcqSubmitBtn");
     btn.innerText = "Check Answer";
@@ -436,38 +1019,59 @@ function renderMCQ() {
     mcqState = "answering";
 }
 
+function selectMCQOption(idx) {
+    if (mcqState === "answered") return;
+    document.querySelectorAll('#mcqOptions .mcq-option').forEach(el => el.classList.remove('selected'));
+    let selectedLabel = document.getElementById(`mcqLabel${idx}`);
+    if (selectedLabel) selectedLabel.classList.add('selected');
+    let input = document.getElementById(`mcqOpt${idx}`);
+    if (input) input.checked = true;
+}
+
 function checkMCQ() {
-    if(mcqState === "correct") {
+    if (mcqState === "answered") {
         currentIndex++;
         renderMCQ();
         return;
     }
 
-    let checkedBoxes = document.querySelectorAll('#mcqOptions input:checked');
-    let selected = Array.from(checkedBoxes).map(cb => cb.value);
-    
-    let isPerfectMatch = true;
-    if(selected.length !== mcqCorrectAnswers.length) isPerfectMatch = false;
-    else {
-        selected.forEach(s => { if(!mcqCorrectAnswers.includes(s)) isPerfectMatch = false; });
-    }
-
+    let selectedInput = document.querySelector('input[name="mcqOption"]:checked');
     let feedback = document.getElementById("mcqFeedback");
+    
+    if (!selectedInput) {
+        feedback.innerText = "Please select an answer.";
+        feedback.className = "feedback incorrect";
+        return;
+    }
+    
+    let isCorrect = (selectedInput.value === mcqCurrentCompound.meaning);
     let btn = document.getElementById("mcqSubmitBtn");
 
-    if(isPerfectMatch) {
-        feedback.innerText = "Correct! All meanings identified.";
+    document.querySelectorAll('#mcqOptions .mcq-option').forEach(el => {
+        let input = el.querySelector('input');
+        if (input.value === mcqCurrentCompound.meaning) {
+            el.classList.add('correct-highlight');
+        } else if (input.checked && !isCorrect) {
+            el.classList.add('incorrect-highlight');
+        }
+    });
+
+    if (isCorrect) {
+        feedback.innerText = "Correct!";
         feedback.className = "feedback correct";
         btn.innerText = "Next Question ➔";
-        btn.style.backgroundColor = "#4caf50";
-        mcqState = "correct";
+        btn.style.backgroundColor = "var(--green-correct)";
+        mcqState = "answered";
     } else {
-        feedback.innerText = "Incorrect. Find the exact combination.";
+        feedback.innerText = `Incorrect. Correct answer: "${mcqCurrentCompound.meaning}"`;
         feedback.className = "feedback incorrect";
+        btn.innerText = "Next Question ➔";
+        btn.style.backgroundColor = "var(--red-accent)";
+        mcqState = "answered";
     }
 }
 
-// 20 Random Test Functions
+// 20-Word Randomized Test Functions (Pooled across all categories)
 function startRandomTest() {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('practiceMode').classList.remove('active');
@@ -476,95 +1080,123 @@ function startRandomTest() {
     let testMode = document.getElementById('testMode');
     testMode.classList.add('active');
     
-    let shuffled = [...allKanjiFlat].sort(() => 0.5 - Math.random());
+    // Pool all compound words across categories and generate a randomized 20-question test
+    let shuffled = [...allCompoundsPool].sort(() => 0.5 - Math.random());
     testQuestions = shuffled.slice(0, 20);
     currentIndex = 0;
     testScore = 0;
     
+    document.getElementById("testSubmitBtn").style.display = "block";
     renderTestQuestion();
 }
 
 function renderTestQuestion() {
-    if(currentIndex >= 20) {
+    if (currentIndex >= 20 || currentIndex >= testQuestions.length) {
         endTest();
         return;
     }
     
     let item = testQuestions[currentIndex];
     
-    document.getElementById("testKanji").innerText = item.char;
-    document.getElementById("testFurigana").innerText = item.furigana;
+    document.getElementById("testKanji").innerText = item.word;
+    document.getElementById("testFurigana").innerText = item.reading;
     document.getElementById("testProgress").innerText = `Question ${currentIndex + 1} / 20`;
     
-    mcqCorrectAnswers = item.meanings;
-    let options = [...mcqCorrectAnswers];
-    
-    while(options.length < 5) {
-        let randMeaning = allMeaningsPool[Math.floor(Math.random() * allMeaningsPool.length)];
-        if(!options.includes(randMeaning)) options.push(randMeaning);
+    let options = [item.meaning];
+    let pool = [...allCompoundMeanings].sort(() => 0.5 - Math.random());
+    for (let m of pool) {
+        if (!options.includes(m)) {
+            options.push(m);
+            if (options.length === 4) break;
+        }
     }
-    
-    options.sort(() => Math.random() - 0.5);
+    options.sort(() => 0.5 - Math.random());
     
     let optionsHtml = "";
     options.forEach((opt, idx) => {
-        optionsHtml += `<label class="mcq-option">
-            <input type="checkbox" value="${opt}" id="testOpt${idx}"> 
-            <span>${opt}</span>
+        optionsHtml += `<label class="mcq-option" id="testLabel${idx}" onclick="selectTestOption(${idx})">
+            <input type="radio" name="testOption" value="${escapeHtml(opt)}" id="testOpt${idx}"> 
+            <span>${escapeHtml(opt)}</span>
         </label>`;
     });
     
     document.getElementById("testOptions").innerHTML = optionsHtml;
     document.getElementById("testFeedback").innerText = "";
+    document.getElementById("testFeedback").className = "feedback";
+    document.getElementById("testSubmitBtn").disabled = false;
+}
+
+function selectTestOption(idx) {
+    document.querySelectorAll('#testOptions .mcq-option').forEach(el => el.classList.remove('selected'));
+    let selectedLabel = document.getElementById(`testLabel${idx}`);
+    if (selectedLabel) selectedLabel.classList.add('selected');
+    let input = document.getElementById(`testOpt${idx}`);
+    if (input) input.checked = true;
 }
 
 function checkTest() {
-    let checkedBoxes = document.querySelectorAll('#testOptions input:checked');
-    let selected = Array.from(checkedBoxes).map(cb => cb.value);
-    
-    let isPerfectMatch = true;
-    if(selected.length !== mcqCorrectAnswers.length) isPerfectMatch = false;
-    else {
-        selected.forEach(s => { if(!mcqCorrectAnswers.includes(s)) isPerfectMatch = false; });
-    }
-
+    let selectedInput = document.querySelector('input[name="testOption"]:checked');
     let feedback = document.getElementById("testFeedback");
     
-    if(isPerfectMatch) {
+    if (!selectedInput) {
+        feedback.innerText = "Please select an answer.";
+        feedback.className = "feedback incorrect";
+        return;
+    }
+    
+    let item = testQuestions[currentIndex];
+    let isCorrect = (selectedInput.value === item.meaning);
+    
+    document.querySelectorAll('#testOptions .mcq-option').forEach(el => {
+        let input = el.querySelector('input');
+        if (input.value === item.meaning) {
+            el.classList.add('correct-highlight');
+        } else if (input.checked && !isCorrect) {
+            el.classList.add('incorrect-highlight');
+        }
+    });
+    
+    if (isCorrect) {
         testScore++;
         feedback.innerText = "Correct!";
         feedback.className = "feedback correct";
     } else {
-        feedback.innerText = `Incorrect. Correct was: ${mcqCorrectAnswers.join(", ")}`;
+        feedback.innerText = `Incorrect. Correct was: "${item.meaning}"`;
         feedback.className = "feedback incorrect";
     }
     
     document.getElementById("testSubmitBtn").disabled = true;
     
     setTimeout(() => {
-        document.getElementById("testSubmitBtn").disabled = false;
         currentIndex++;
         renderTestQuestion();
-    }, 1800);
+    }, 1600);
 }
 
 function endTest() {
     document.getElementById("testKanji").innerText = "完了"; 
     document.getElementById("testFurigana").innerText = "かんりょう";
     
-    let percentage = (testScore / 20) * 100;
+    let percentage = Math.round((testScore / 20) * 100);
     document.getElementById("testProgress").innerText = `Final Score: ${testScore} / 20 (${percentage}%)`;
     
-    let evaluation = percentage >= 90 ? "Excellent work!" : percentage >= 70 ? "Good job! Keep practicing." : "Needs more review.";
+    let evaluation = percentage >= 90 ? "Excellent work! Kanji compound master!" : percentage >= 70 ? "Good job! Keep practicing." : "Needs more review. Keep practicing!";
+    let scoreColor = percentage >= 70 ? "var(--green-correct)" : "var(--red-accent)";
     
-    document.getElementById("testOptions").innerHTML = `<h3 style="text-align:center; color:var(--text-main); margin-top:20px;">${evaluation}</h3>`;
+    document.getElementById("testOptions").innerHTML = `
+        <div style="text-align:center; padding: 15px 0;">
+            <div style="font-size: 46px; font-weight: 700; color: ${scoreColor}; margin-bottom: 8px;">
+                ${percentage}%
+            </div>
+            <h3 style="color:var(--text-main); font-size: 18px; margin-bottom: 22px;">${evaluation}</h3>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button onclick="startRandomTest()" style="background-color: var(--red-accent);">Retake Test</button>
+                <button onclick="setMode('practice')" style="background-color: #33333e;">Back to Practice</button>
+            </div>
+        </div>
+    `;
     document.getElementById("testFeedback").innerText = "";
     document.getElementById("testSubmitBtn").style.display = "none";
-    
-    setTimeout(() => {
-        document.getElementById("testSubmitBtn").style.display = "block";
-        setMode('practice'); 
-    }, 5000);
 }
 
 // Initialize application
