@@ -451,6 +451,181 @@
         margin-bottom: 12px;
     }
 
+    /* Compound Kana Writing Test Mode Styles */
+    .kana-test-subtitle {
+        color: #9292a0;
+        font-size: 13px;
+        margin-bottom: 14px;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    .kana-progress-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 6px;
+    }
+
+    .kana-score-pill {
+        font-size: 12.5px;
+        color: #4caf50;
+        font-weight: 600;
+        background: #142417;
+        border: 1px solid #234d28;
+        padding: 3px 11px;
+        border-radius: 12px;
+    }
+
+    .kana-progress-bar-track {
+        width: 100%;
+        height: 6px;
+        background: #202028;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    .kana-progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--red-accent), #ff6161);
+        transition: width 0.25s ease;
+    }
+
+    .kana-card {
+        width: 100%;
+        background: var(--card-bg);
+        border: 1px solid var(--gray-border);
+        border-radius: 12px;
+        padding: 22px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 18px;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+
+    .kana-display-word {
+        font-size: 56px;
+        font-weight: 500;
+        font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+        letter-spacing: 6px;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        line-height: 1.1;
+    }
+
+    .kana-display-meaning {
+        font-size: 16px;
+        color: #d6d6e2;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .kana-display-source {
+        font-size: 12px;
+        color: #888898;
+        background: #14141a;
+        border: 1px solid #282834;
+        padding: 3px 10px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    .kana-input-area {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .kana-input-box {
+        width: 100%;
+        background: #101014;
+        border: 2px solid var(--gray-border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 22px;
+        color: #ffffff;
+        text-align: center;
+        font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+        transition: all 0.2s ease;
+        outline: none;
+        letter-spacing: 1px;
+    }
+
+    .kana-input-box:focus {
+        border-color: var(--red-accent);
+        box-shadow: 0 0 12px rgba(229, 57, 53, 0.35);
+    }
+
+    .kana-input-box.input-correct {
+        border-color: var(--green-correct) !important;
+        background: #0e2012 !important;
+        box-shadow: 0 0 14px rgba(76, 175, 80, 0.4) !important;
+    }
+
+    .kana-input-box.input-incorrect {
+        border-color: var(--red-accent) !important;
+        background: #2a1114 !important;
+        box-shadow: 0 0 14px rgba(229, 57, 53, 0.4) !important;
+    }
+
+    .kana-hint-text {
+        font-size: 11.5px;
+        color: #727282;
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .missed-compounds-container {
+        width: 100%;
+        max-height: 260px;
+        overflow-y: auto;
+        margin: 15px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-right: 4px;
+    }
+
+    .missed-compound-card {
+        background: #191922;
+        border: 1px solid #2a2a38;
+        border-left: 3px solid var(--red-accent);
+        border-radius: 8px;
+        padding: 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .missed-ruby {
+        font-size: 20px;
+        font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+        color: var(--text-main);
+    }
+
+    .missed-ruby rt {
+        color: var(--green-correct);
+        font-size: 12px;
+    }
+
+    .missed-details {
+        text-align: right;
+        font-size: 12.5px;
+        color: #aaaab8;
+    }
+
+    .missed-user-ans {
+        color: #e57373;
+        font-size: 11.5px;
+        margin-top: 2px;
+    }
+
     @media (max-width: 480px) {
         .container {
             padding: 20px 14px;
@@ -468,6 +643,21 @@
         .step-pill {
             padding: 4px 8px;
             font-size: 11px;
+        }
+        .kana-display-word {
+            font-size: 44px;
+        }
+        .kana-input-box {
+            font-size: 19px;
+            padding: 12px 14px;
+        }
+        .missed-compound-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        .missed-details {
+            text-align: left;
         }
     }
 </style>
@@ -496,6 +686,7 @@
     </div>
     <div class="mode-switch">
         <button id="btnPractice" class="mode-btn active" onclick="setMode('practice')">Practice (Trace)</button>
+        <button id="btnKanaTest" class="mode-btn" onclick="startCurrentBlockKanaTest()">Kana Test (Review)</button>
         <button id="btnMCQ" class="mode-btn" onclick="setMode('mcq')">MCQ Quiz</button>
     </div>
 </header>
@@ -533,6 +724,47 @@
         </div>
         <div id="pracCompoundsList" class="compounds-grid"></div>
     </div>
+</div>
+
+<!-- Compound Kana Writing Test Mode (Triggered after every 5 kanji practiced or via mode button) -->
+<div id="kanaTestMode" class="container">
+    <div id="kanaTestActiveArea" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+        <h2 style="color:var(--red-accent); margin-bottom: 6px; font-weight: 600;">Compound Kana Test</h2>
+        <div id="kanaTestSubtitle" class="kana-test-subtitle">Testing compound words from your last 5 practiced kanji</div>
+        
+        <div class="kana-progress-row">
+            <div id="kanaTestProgress" class="progress">Compound 1 / 22</div>
+            <div id="kanaTestScoreDisplay" class="kana-score-pill">Score: 0</div>
+        </div>
+        
+        <div class="kana-progress-bar-track">
+            <div id="kanaProgressBarFill" class="kana-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        
+        <div class="kana-card">
+            <div id="kanaTestKanji" class="kana-display-word">一日</div>
+            <div id="kanaTestMeaning" class="kana-display-meaning">One day</div>
+            <div id="kanaTestKanjiSource" class="kana-display-source">Target Kanji: 一</div>
+        </div>
+        
+        <p class="instruction-text" style="margin-bottom:8px;">Write the reading (furigana) in kana:</p>
+        
+        <div class="kana-input-area">
+            <input type="text" id="kanaInput" class="kana-input-box" placeholder="Type kana or romaji (e.g. いちにち or ichinichi)" autocomplete="off" autocapitalize="off" spellcheck="false" oninput="handleKanaLiveInput(this)" onkeydown="handleKanaKeydown(event)" />
+            <div class="kana-hint-text">Tip: Romaji converts to hiragana automatically. Press Enter to submit.</div>
+        </div>
+        
+        <div id="kanaTestFeedback" class="feedback"></div>
+        
+        <button id="kanaSubmitBtn" onclick="handleKanaSubmitBtn()" style="width:100%; padding: 14px; font-size: 16px; font-weight: 600;">Check Kana ➔</button>
+        
+        <div style="display:flex; gap:10px; width:100%; margin-top:10px;">
+            <button id="kanaSkipBtn" onclick="skipKanaQuestion()" style="flex:1; background:#22222c; border:1px solid #363644; font-size:13px; padding:10px; color:#aaa;">Don't Know (Skip)</button>
+            <button onclick="exitKanaTest()" style="flex:1; background:#1b1b22; border:1px solid #2e2e38; font-size:13px; padding:10px; color:#888;">Back to Practice</button>
+        </div>
+    </div>
+    
+    <div id="kanaTestResultsArea" style="width:100%; display:none; flex-direction:column; align-items:center;"></div>
 </div>
 
 <!-- MCQ Mode -->
@@ -626,6 +858,117 @@ let testQuestions = [];
 let mcqCurrentCompound = null;
 let mcqState = "answering"; // answering, answered
 
+// Compound Kana Writing Test State (Triggered every 5 kanji)
+let kanaTestQuestions = [];
+let kanaTestIndex = 0;
+let kanaTestScore = 0;
+let kanaTestMissed = [];
+let kanaTestState = "answering"; // "answering", "feedback"
+let kanaTestStartIndex = 0;
+let kanaTestEndIndex = 4;
+let kanaTestAutoAdvanceTimer = null;
+
+// Romaji to Hiragana Mapping
+const romajiMap = {
+    "kya":"きゃ","kyu":"きゅ","kyo":"きょ",
+    "gya":"ぎゃ","gyu":"ぎゅ","gyo":"ぎょ",
+    "sha":"しゃ","shu":"しゅ","sho":"しょ",
+    "sya":"しゃ","syu":"しゅ","syo":"しょ",
+    "cha":"ちゃ","chu":"ちゅ","cho":"ちょ",
+    "tya":"ちゃ","tyu":"ちゅ","tyo":"ちょ",
+    "nya":"にゃ","nyu":"にゅ","nyo":"にょ",
+    "hya":"ひゃ","hyu":"ひゅ","hyo":"ひょ",
+    "bya":"びゃ","byu":"びゅ","byo":"びょ",
+    "pya":"ぴゃ","pyu":"ぴゅ","pyo":"ぴょ",
+    "mya":"みゃ","myu":"みゅ","myo":"みょ",
+    "rya":"りゃ","ryu":"りゅ","ryo":"りょ",
+    "ja":"じゃ","ju":"じゅ","jo":"じょ",
+    "zya":"じゃ","zyu":"じゅ","zyo":"じょ",
+    "jya":"じゃ","jyu":"じゅ","jyo":"じょ",
+    "dha":"でゃ","dhu":"でゅ","dho":"でょ",
+    "xtsu":"っ","ltsu":"っ","xtu":"っ","ltu":"っ",
+    "xya":"ゃ","xyu":"ゅ","xyo":"ょ",
+    "shi":"し","chi":"ち","tsu":"つ","fu":"ふ",
+    "ti":"ち","tu":"つ","hu":"ふ","si":"し","zi":"じ",
+    "ka":"か","ki":"き","ku":"く","ke":"け","ko":"こ",
+    "ga":"が","gi":"ぎ","gu":"ぐ","ge":"げ","go":"ご",
+    "sa":"さ","su":"す","se":"せ","so":"そ","za":"ざ","ji":"じ","zu":"ず","ze":"ぜ","zo":"ぞ",
+    "ta":"た","te":"て","to":"と","da":"だ","di":"ぢ","du":"づ","de":"で","do":"ど",
+    "na":"な","ni":"に","nu":"ぬ","ne":"ね","no":"の",
+    "ha":"は","hi":"ひ","he":"へ","ho":"ほ",
+    "ba":"ば","bi":"び","bu":"ぶ","be":"べ","bo":"ぼ",
+    "pa":"ぱ","pi":"ぴ","pu":"ぷ","pe":"ぺ","po":"ぽ",
+    "ma":"ま","mi":"み","mu":"む","me":"め","mo":"も",
+    "ya":"や","yu":"ゆ","yo":"よ",
+    "ra":"ら","ri":"り","ru":"る","re":"れ","ro":"ろ",
+    "wa":"わ","wo":"を",
+    "a":"あ","i":"い","u":"う","e":"え","o":"お",
+    "nn":"ん"
+};
+
+function liveKanaConvert(input, isFinal = false) {
+    if (!input) return "";
+    let str = input.toLowerCase();
+    let res = "";
+    let i = 0;
+    while (i < str.length) {
+        let c4 = str.slice(i, i + 4);
+        if (romajiMap[c4]) {
+            res += romajiMap[c4];
+            i += 4;
+            continue;
+        }
+        let c3 = str.slice(i, i + 3);
+        if (romajiMap[c3]) {
+            res += romajiMap[c3];
+            i += 3;
+            continue;
+        }
+        if (i + 1 < str.length && str[i] === str[i+1] && /[bcdfghjklmpqrstvwxyz]/.test(str[i]) && str[i] !== "n") {
+            res += "っ";
+            i++;
+            continue;
+        }
+        let c2 = str.slice(i, i + 2);
+        if (romajiMap[c2]) {
+            res += romajiMap[c2];
+            i += 2;
+            continue;
+        }
+        if (str[i] === "n") {
+            if (i + 1 < str.length) {
+                if (!/[aeiouy]/.test(str[i+1])) {
+                    res += "ん";
+                    i++;
+                    if (str[i] === "n" || str[i] === "'") i++;
+                    continue;
+                }
+            } else if (isFinal) {
+                res += "ん";
+                i++;
+                continue;
+            }
+        }
+        let c1 = str[i];
+        if (romajiMap[c1]) {
+            res += romajiMap[c1];
+            i++;
+            continue;
+        }
+        res += c1;
+        i++;
+    }
+    return res;
+}
+
+function normalizeKanaInput(str) {
+    if (!str) return "";
+    let s = str.replace(/[\uff01-\uff5e]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, " ");
+    s = liveKanaConvert(s, true);
+    s = s.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+    return s.trim();
+}
+
 // Escape HTML utility
 function escapeHtml(str) {
     if (!str) return "";
@@ -669,6 +1012,8 @@ function setMode(mode) {
     document.getElementById('practiceMode').classList.remove('active');
     document.getElementById('mcqMode').classList.remove('active');
     document.getElementById('testMode').classList.remove('active');
+    let kanaModeEl = document.getElementById('kanaTestMode');
+    if (kanaModeEl) kanaModeEl.classList.remove('active');
 
     if (mode === 'practice') {
         document.getElementById('btnPractice').classList.add('active');
@@ -678,6 +1023,10 @@ function setMode(mode) {
         document.getElementById('btnMCQ').classList.add('active');
         document.getElementById('mcqMode').classList.add('active');
         renderMCQ();
+    } else if (mode === 'kanaTest') {
+        let btnKana = document.getElementById('btnKanaTest');
+        if (btnKana) btnKana.classList.add('active');
+        if (kanaModeEl) kanaModeEl.classList.add('active');
     }
 }
 
@@ -742,15 +1091,24 @@ function renderPractice() {
 
     btnPrev.disabled = (currentIndex === 0 && currentSubStep === 0);
 
+    let blockNum = Math.floor(currentIndex / 5) + 1;
+    let kanjiInBlock = (currentIndex % 5) + 1;
+    let blockStart = (blockNum - 1) * 5 + 1;
+    let blockEnd = Math.min(blockNum * 5, currentList.length);
+    let blockTag = ` • Block ${blockNum} (${kanjiInBlock}/5${kanjiInBlock === 5 ? ' 🌟 Test Next' : ''})`;
+
     if (currentSubStep === 0) {
         // --- BASE KANJI MODE ---
-        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Base Character`;
+        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Base Character${blockTag}`;
         document.getElementById("pracFurigana").innerText = item.furigana;
         document.getElementById("pracMeanings").innerText = item.meanings.join(", ");
         banner.innerText = `Trace stroke order for "${item.char}"`;
         banner.className = "trace-status-banner";
 
         btnNext.innerText = `Next: 1. ${item.compounds[0] ? item.compounds[0].word : 'Compound'} ➔`;
+        btnNext.style.backgroundColor = "";
+        btnNext.style.color = "";
+        btnNext.style.fontWeight = "";
 
         let size = getSingleCanvasSize();
         stage.innerHTML = `
@@ -791,7 +1149,7 @@ function renderPractice() {
         let compIdx = currentSubStep - 1;
         let comp = item.compounds[compIdx];
 
-        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Compound ${currentSubStep} / ${numCompounds}`;
+        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Compound ${currentSubStep} / ${numCompounds}${blockTag}`;
         document.getElementById("pracFurigana").innerText = comp.reading;
         document.getElementById("pracMeanings").innerText = comp.meaning;
         banner.innerText = `Trace compound: 1. ${comp.word[0]}  then  2. ${comp.word[1]}`;
@@ -799,8 +1157,21 @@ function renderPractice() {
 
         if (currentSubStep < numCompounds) {
             btnNext.innerText = `Next: ${currentSubStep + 1}. ${item.compounds[currentSubStep].word} ➔`;
+            btnNext.style.backgroundColor = "";
+            btnNext.style.color = "";
+            btnNext.style.fontWeight = "";
         } else {
-            btnNext.innerText = `Next Kanji ➔`;
+            if ((currentIndex + 1) % 5 === 0) {
+                btnNext.innerText = `Next: Compound Kana Test (Kanji ${blockStart}–${blockEnd}) ➔`;
+                btnNext.style.backgroundColor = "var(--green-correct)";
+                btnNext.style.color = "#ffffff";
+                btnNext.style.fontWeight = "600";
+            } else {
+                btnNext.innerText = `Next Kanji ➔`;
+                btnNext.style.backgroundColor = "";
+                btnNext.style.color = "";
+                btnNext.style.fontWeight = "";
+            }
         }
 
         let cSize = getDualCanvasSize();
@@ -899,10 +1270,18 @@ function renderStepperState() {
 
 function checkCompoundBothDone(word, cKey) {
     let banner = document.getElementById("pracStatusBanner");
+    let item = currentList[currentIndex];
+    let numCompounds = (item.compounds && item.compounds.length) || 0;
+
     if (compChar1Done && compChar2Done) {
         completedSteps[cKey] = true;
         if (banner) {
-            banner.innerText = `Compound "${word}" Completed! ✨`;
+            if (currentSubStep === numCompounds && (currentIndex + 1) % 5 === 0) {
+                let blockNum = Math.floor(currentIndex / 5) + 1;
+                banner.innerText = `5 Kanji Completed! Click Next to test compound kana! 🌟`;
+            } else {
+                banner.innerText = `Compound "${word}" Completed! ✨`;
+            }
             banner.className = "trace-status-banner success";
         }
         renderStepperState();
@@ -936,15 +1315,25 @@ function nextPractice() {
     if (currentSubStep < numCompounds) {
         // Move to the compound word of the same kanji right after it!
         currentSubStep++;
+        renderPractice();
     } else {
+        // Finished all compounds for this kanji!
+        // Check if this was the 5th kanji of a 5-kanji block:
+        if ((currentIndex + 1) % 5 === 0) {
+            let startIdx = currentIndex - 4;
+            let endIdx = currentIndex;
+            triggerBlockKanaTest(startIdx, endIdx);
+            return;
+        }
+
         // Finished all compounds for this kanji -> advance to next kanji base!
         currentIndex++;
         currentSubStep = 0;
         if (currentIndex >= currentList.length) {
             currentIndex = 0;
         }
+        renderPractice();
     }
-    renderPractice();
 }
 
 function animateStrokeOrder() {
@@ -974,6 +1363,342 @@ function animateStrokeOrder() {
             });
         }
     }
+}
+
+// Compound Kana Writing Test Functions (Tests Kana Readings of Compounds after every 5 kanji)
+function triggerBlockKanaTest(startIdx, endIdx) {
+    startIdx = Math.max(0, startIdx);
+    endIdx = Math.min(currentList.length - 1, endIdx);
+
+    kanaTestStartIndex = startIdx;
+    kanaTestEndIndex = endIdx;
+    kanaTestIndex = 0;
+    kanaTestScore = 0;
+    kanaTestMissed = [];
+    kanaTestQuestions = [];
+
+    // Gather every compound word from the 5 kanji in this block
+    for (let i = startIdx; i <= endIdx; i++) {
+        let kItem = currentList[i];
+        if (kItem && kItem.compounds) {
+            kItem.compounds.forEach(comp => {
+                kanaTestQuestions.push({
+                    word: comp.word,
+                    reading: comp.reading,
+                    meaning: comp.meaning,
+                    kanjiChar: kItem.char,
+                    kanjiMeanings: kItem.meanings.join(", ")
+                });
+            });
+        }
+    }
+
+    // Shuffle questions for randomized active recall
+    kanaTestQuestions.sort(() => 0.5 - Math.random());
+
+    let activeArea = document.getElementById("kanaTestActiveArea");
+    let resultsArea = document.getElementById("kanaTestResultsArea");
+    if (activeArea) activeArea.style.display = "flex";
+    if (resultsArea) {
+        resultsArea.style.display = "none";
+        resultsArea.innerHTML = "";
+    }
+
+    setMode('kanaTest');
+    renderKanaTestQuestion();
+}
+
+function startCurrentBlockKanaTest() {
+    let startIdx = Math.floor(currentIndex / 5) * 5;
+    let endIdx = Math.min(startIdx + 4, currentList.length - 1);
+    triggerBlockKanaTest(startIdx, endIdx);
+}
+
+function renderKanaTestQuestion() {
+    if (kanaTestIndex >= kanaTestQuestions.length) {
+        endKanaTest();
+        return;
+    }
+
+    let item = kanaTestQuestions[kanaTestIndex];
+    kanaTestState = "answering";
+
+    let startNum = kanaTestStartIndex + 1;
+    let endNum = kanaTestEndIndex + 1;
+
+    let subtitleEl = document.getElementById("kanaTestSubtitle");
+    if (subtitleEl) {
+        subtitleEl.innerText = `Testing all compound words from Kanji ${startNum}–${endNum} (${kanaTestQuestions.length} words)`;
+    }
+
+    document.getElementById("kanaTestProgress").innerText = `Compound ${kanaTestIndex + 1} / ${kanaTestQuestions.length}`;
+    document.getElementById("kanaTestScoreDisplay").innerText = `Score: ${kanaTestScore}`;
+
+    let pct = Math.round((kanaTestIndex / kanaTestQuestions.length) * 100);
+    let fill = document.getElementById("kanaProgressBarFill");
+    if (fill) fill.style.width = `${pct}%`;
+
+    document.getElementById("kanaTestKanji").innerText = item.word;
+    document.getElementById("kanaTestMeaning").innerText = `"${item.meaning}"`;
+    document.getElementById("kanaTestKanjiSource").innerText = `Target Kanji: ${item.kanjiChar}`;
+
+    let input = document.getElementById("kanaInput");
+    if (input) {
+        input.value = "";
+        input.className = "kana-input-box";
+        input.disabled = false;
+        setTimeout(() => { if (input) input.focus(); }, 40);
+    }
+
+    let feedback = document.getElementById("kanaTestFeedback");
+    if (feedback) {
+        feedback.innerText = "";
+        feedback.className = "feedback";
+    }
+
+    let submitBtn = document.getElementById("kanaSubmitBtn");
+    if (submitBtn) {
+        submitBtn.innerText = "Check Kana ➔";
+        submitBtn.style.backgroundColor = "";
+    }
+
+    let skipBtn = document.getElementById("kanaSkipBtn");
+    if (skipBtn) skipBtn.style.display = "block";
+}
+
+function handleKanaSubmitBtn() {
+    if (kanaTestState === "feedback") {
+        nextKanaQuestion();
+    } else {
+        submitKanaAnswer();
+    }
+}
+
+function submitKanaAnswer() {
+    if (kanaTestState === "feedback") {
+        nextKanaQuestion();
+        return;
+    }
+
+    let input = document.getElementById("kanaInput");
+    let rawVal = input ? input.value : "";
+    let normalized = normalizeKanaInput(rawVal);
+    let item = kanaTestQuestions[kanaTestIndex];
+    let feedback = document.getElementById("kanaTestFeedback");
+    let submitBtn = document.getElementById("kanaSubmitBtn");
+    let skipBtn = document.getElementById("kanaSkipBtn");
+
+    if (!normalized) {
+        if (feedback) {
+            feedback.innerText = "Please type the kana reading (or click Skip).";
+            feedback.className = "feedback incorrect";
+        }
+        if (input) input.focus();
+        return;
+    }
+
+    let expected = item.reading;
+    let isCorrect = (normalized === expected);
+
+    kanaTestState = "feedback";
+    if (input) input.disabled = true;
+    if (skipBtn) skipBtn.style.display = "none";
+    if (submitBtn) {
+        submitBtn.innerText = "Next Compound ➔";
+        submitBtn.style.backgroundColor = "var(--red-accent)";
+    }
+
+    if (isCorrect) {
+        kanaTestScore++;
+        if (input) input.className = "kana-input-box input-correct";
+        if (feedback) {
+            feedback.innerText = `✓ Correct! 「${expected}」`;
+            feedback.className = "feedback correct";
+        }
+        document.getElementById("kanaTestScoreDisplay").innerText = `Score: ${kanaTestScore}`;
+
+        if (kanaTestAutoAdvanceTimer) clearTimeout(kanaTestAutoAdvanceTimer);
+        kanaTestAutoAdvanceTimer = setTimeout(() => {
+            if (kanaTestState === "feedback") {
+                nextKanaQuestion();
+            }
+        }, 900);
+    } else {
+        if (input) input.className = "kana-input-box input-incorrect";
+        if (feedback) {
+            feedback.innerText = `✗ Incorrect. Correct was: 「${expected}」`;
+            feedback.className = "feedback incorrect";
+        }
+        kanaTestMissed.push({
+            ...item,
+            userAnswer: normalized
+        });
+    }
+}
+
+function skipKanaQuestion() {
+    if (kanaTestState !== "answering") return;
+
+    let item = kanaTestQuestions[kanaTestIndex];
+    let input = document.getElementById("kanaInput");
+    let feedback = document.getElementById("kanaTestFeedback");
+    let submitBtn = document.getElementById("kanaSubmitBtn");
+    let skipBtn = document.getElementById("kanaSkipBtn");
+
+    kanaTestState = "feedback";
+    if (input) {
+        input.disabled = true;
+        input.className = "kana-input-box input-incorrect";
+    }
+    if (skipBtn) skipBtn.style.display = "none";
+    if (submitBtn) {
+        submitBtn.innerText = "Next Compound ➔";
+        submitBtn.style.backgroundColor = "var(--red-accent)";
+    }
+
+    if (feedback) {
+        feedback.innerText = `Skipped. Correct reading: 「${item.reading}」`;
+        feedback.className = "feedback incorrect";
+    }
+
+    kanaTestMissed.push({
+        ...item,
+        userAnswer: "(Skipped)"
+    });
+}
+
+function nextKanaQuestion() {
+    if (kanaTestAutoAdvanceTimer) {
+        clearTimeout(kanaTestAutoAdvanceTimer);
+        kanaTestAutoAdvanceTimer = null;
+    }
+    kanaTestIndex++;
+    renderKanaTestQuestion();
+}
+
+function handleKanaKeydown(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        if (kanaTestState === "answering") {
+            submitKanaAnswer();
+        } else if (kanaTestState === "feedback") {
+            nextKanaQuestion();
+        }
+    }
+}
+
+function handleKanaLiveInput(inputEl) {
+    let oldVal = inputEl.value;
+    let converted = liveKanaConvert(oldVal, false);
+    if (converted !== oldVal) {
+        inputEl.value = converted;
+        inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+    }
+}
+
+function endKanaTest() {
+    let total = kanaTestQuestions.length;
+    let percentage = total > 0 ? Math.round((kanaTestScore / total) * 100) : 0;
+    let startNum = kanaTestStartIndex + 1;
+    let endNum = kanaTestEndIndex + 1;
+    let nextKanjiNum = endNum < currentList.length ? endNum + 1 : 1;
+
+    let evaluation = percentage >= 90 
+        ? "🌟 Outstanding! Compound readings mastered!" 
+        : percentage >= 70 
+        ? "👏 Great work! Solid reading recall." 
+        : percentage >= 50 
+        ? "📖 Good effort! Review missed compounds below." 
+        : "💪 Keep practicing! Spaced repetition builds mastery.";
+
+    let scoreColor = percentage >= 70 ? "var(--green-correct)" : "var(--red-accent)";
+
+    let missedHtml = "";
+    if (kanaTestMissed.length > 0) {
+        missedHtml = `
+            <div style="width:100%; text-align:left; margin-top:20px;">
+                <div style="font-size:13px; font-weight:600; color:#aaa; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">
+                    Review Missed Compounds (${kanaTestMissed.length}):
+                </div>
+                <div class="missed-compounds-container">
+        `;
+        kanaTestMissed.forEach(m => {
+            missedHtml += `
+                <div class="missed-compound-card">
+                    <div>
+                        <ruby class="missed-ruby">${escapeHtml(m.word)}<rt>${escapeHtml(m.reading)}</rt></ruby>
+                        <div style="font-size:12px; color:#8e8e9c; margin-top:3px;">${escapeHtml(m.meaning)}</div>
+                    </div>
+                    <div class="missed-details">
+                        <div>Correct: <span style="color:var(--green-correct); font-weight:600;">${escapeHtml(m.reading)}</span></div>
+                        <div class="missed-user-ans">Entered: ${escapeHtml(m.userAnswer)}</div>
+                    </div>
+                </div>
+            `;
+        });
+        missedHtml += `</div></div>`;
+    } else {
+        missedHtml = `
+            <div style="margin: 20px 0; padding: 14px; background: #132416; border: 1px solid #234d28; border-radius: 8px; color: #a4e5ab; font-size: 14px; text-align: center;">
+                ✨ Perfect Score! You correctly wrote the kana for every compound word!
+            </div>
+        `;
+    }
+
+    let continueBtnText = endNum < currentList.length 
+        ? `Continue Practicing (Kanji ${nextKanjiNum} ➔)` 
+        : `Category Complete! Restart (Kanji 1 ➔)`;
+
+    let activeArea = document.getElementById("kanaTestActiveArea");
+    let resultsArea = document.getElementById("kanaTestResultsArea");
+
+    if (activeArea) activeArea.style.display = "none";
+    if (resultsArea) {
+        resultsArea.style.display = "flex";
+        resultsArea.innerHTML = `
+            <h2 style="color:var(--red-accent); margin-bottom: 6px; font-weight: 600;">Kana Test Complete!</h2>
+            <div class="kana-test-subtitle">Results for all compound words of Kanji ${startNum}–${endNum}</div>
+            
+            <div style="text-align:center; padding: 16px 0; width:100%;">
+                <div style="font-size: 52px; font-weight: 700; color: ${scoreColor}; margin-bottom: 6px;">
+                    ${percentage}%
+                </div>
+                <div style="font-size: 15px; color: #a0a0b0; margin-bottom: 8px;">
+                    Score: <strong style="color:#fff;">${kanaTestScore}</strong> / ${total} Correct
+                </div>
+                <h3 style="color:var(--text-main); font-size: 17px; margin-bottom: 18px;">${evaluation}</h3>
+                
+                <button onclick="continueAfterKanaTest()" style="width:100%; padding: 15px; font-size: 16px; font-weight:600; background-color: var(--red-accent); margin-bottom:12px;">
+                    ${continueBtnText}
+                </button>
+                
+                <div style="display:flex; gap:10px; width:100%;">
+                    <button onclick="retryKanaTest()" style="flex:1; background-color: #272734; padding:12px; font-size:14px; border:1px solid #3c3c4e;">Retry Test</button>
+                    <button onclick="setMode('practice')" style="flex:1; background-color: #1a1a22; padding:12px; font-size:14px; border:1px solid #2b2b38; color:#888;">Back to Tracing</button>
+                </div>
+                
+                ${missedHtml}
+            </div>
+        `;
+    }
+}
+
+function continueAfterKanaTest() {
+    let nextIdx = kanaTestEndIndex + 1;
+    if (nextIdx >= currentList.length) {
+        nextIdx = 0;
+    }
+    currentIndex = nextIdx;
+    currentSubStep = 0;
+    setMode('practice');
+}
+
+function retryKanaTest() {
+    triggerBlockKanaTest(kanaTestStartIndex, kanaTestEndIndex);
+}
+
+function exitKanaTest() {
+    setMode('practice');
 }
 
 // MCQ Mode Functions (Tests Compound Words)
@@ -1098,6 +1823,8 @@ function startRandomTest() {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('practiceMode').classList.remove('active');
     document.getElementById('mcqMode').classList.remove('active');
+    let kanaModeEl = document.getElementById('kanaTestMode');
+    if (kanaModeEl) kanaModeEl.classList.remove('active');
     
     let testMode = document.getElementById('testMode');
     testMode.classList.add('active');
