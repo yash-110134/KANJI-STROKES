@@ -593,6 +593,26 @@ let currentSubStep = 0; // 0 = Base Kanji, 1..N = Compound words of current kanj
 // Completed tracking: completedSubSteps[cat_index_substep] = true
 let completedSteps = {};
 
+function loadKanjiData(char, onLoad, onError) {
+    // Try Japanese Kanji stroke dataset first
+    fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-jp@0/${encodeURIComponent(char)}.json`)
+        .then(res => {
+            if (!res.ok) throw new Error("Not in JP dataset");
+            return res.json();
+        })
+        .then(onLoad)
+        .catch(() => {
+            // Fallback to standard HanziWriter Chinese dataset if not found
+            fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encodeURIComponent(char)}.json`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Character not found");
+                    return res.json();
+                })
+                .then(onLoad)
+                .catch(onError);
+        });
+}
+
 // HanziWriter instances
 let baseWriter = null;
 let compWriter1 = null;
@@ -744,6 +764,7 @@ function renderPractice() {
             width: size,
             height: size,
             padding: 16,
+            charDataLoader: loadKanjiData, // <--- Add this
             strokeAnimationSpeed: 1.5,
             delayBetweenStrokes: 100,
             strokeColor: '#333333',
@@ -800,6 +821,7 @@ function renderPractice() {
             width: cSize,
             height: cSize,
             padding: 12,
+            charDataLoader: loadKanjiData, // <--- Add this
             strokeAnimationSpeed: 1.5,
             delayBetweenStrokes: 90,
             strokeColor: '#333333',
