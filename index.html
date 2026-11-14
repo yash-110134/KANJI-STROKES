@@ -660,6 +660,28 @@
             text-align: left;
         }
     }
+    .search-bar {
+        margin-top: 14px;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .search-bar input {
+        background-color: #22222a;
+        color: white;
+        border: 1px solid var(--gray-border);
+        padding: 9px 14px;
+        border-radius: 6px;
+        font-size: 14px;
+        width: 240px;
+        outline: none;
+    }
+
+    .search-bar input:focus {
+        border-color: var(--red-accent);
+    }
 </style>
 </head>
 <body>
@@ -667,6 +689,10 @@
 <header>
     <h1>Kanji<span>Mastery</span></h1>
     <div class="controls">
+      <div class="search-bar">
+        <input type="text" id="kanjiSearchInput" placeholder="Search kanji, kana, or meaning..." onkeydown="if(event.key==='Enter') jumpToKanji()">
+        <button onclick="jumpToKanji()">Jump</button>
+    </div>
         <select id="categorySelect" onchange="loadCategory(this.value)">
             <option value="1">1. Numbers, Time & Days</option>
             <option value="2">2. Nature, Weather & Geography</option>
@@ -681,6 +707,13 @@
             <option value="11">11. Perception, Emotion, Status</option>
             <option value="12">12. Measurement, Systems & Infra</option>
             <option value="13">13. Core Terminology & Media</option>
+        </select>
+        <select id="levelSelect" onchange="loadLevel(this.value)">
+            <option value="">-- Filter by JLPT Level --</option>
+            <option value="N5">Stage 1: JLPT N5 (~101 Kanji)</option>
+            <option value="N4">Stage 2: JLPT N4 (~130 Kanji)</option>
+            <option value="N3">Stage 3: JLPT N3 (~419 Kanji)</option>
+            <option value="ALL">All Kanji (650)</option>
         </select>
         <button onclick="startRandomTest()">Start 20-Word Test</button>
     </div>
@@ -811,6 +844,68 @@ const rawData = {
     12: "交:まじ:Mix,Intersect,Exchange@交通:こうつう:Traffic / transport;外交:がいこう:Diplomacy;交番:こうばん:Police box;交換:こうかん:Exchange|資:し:Assets,Resources,Capital@資料:しりょう:Materials / data;資源:しげん:Resources;資本:しほん:Capital / funds;資格:しかく:Qualification / credentials|運:はこ:Carry,Transport,Luck@運動:うんどう:Motion / exercise;運転:うんてん:Operation / driving;運命:うんめい:Fate / destiny;幸運:こううん:Good fortune / lucky|楽:たの:Music,Comfort,Fun@音楽:おんがく:Music;気楽:きらく:Carefree / comfortable;娯楽:ごらく:Amusement / entertainment;楽器:がっき:Musical instrument|組:くみ:Assemble,Put together,Group@組合:くみあい:Association / union;組織:そしき:Organization / structure;番組:ばんぐみ:TV or radio program;組曲:くみきょく:Suite (music)|車:くるま:Car,Vehicle,Wheel@電車:でんしゃ:Electric train;車両:しゃりょう:Rolling stock / vehicle;車道:しゃどう:Roadway / carriage way;車輪:しゃりん:Vehicle wheel|字:じ:Character,Letter,Word@漢字:かんじ:Chinese character / kanji;文字:もじ:Letter / character;赤字:あかじ:Deficit / in the red;黒字:くろじ:Surplus / in the black|病:やまい:Illness,Sickness@病院:びょういん:Hospital;病気:びょうき:Illness / sickness;急病:きゅうびょう:Sudden illness;持病:じびょう:Chronic disease|歌:うた:Song,Sing@歌手:かしゅ:Singer;国歌:こっか:National anthem;歌詞:かし:Song lyrics;校歌:こうか:School song|局:きょく:Bureau,Office,Board@局長:きょくちょう:Bureau director;薬局:やっきょく:Pharmacy / drugstore;局面:きょくめん:Situation / phase;結局:けっきょく:After all / in the end|健:すこ:Healthy,Health@健康:けんこう:Health;健全:けんぜん:Wholesome / sound;保健:ほけん:Health preservation / hygiene;剛健:ごうけん:Robust / sturdy|音:おと:Sound,Noise@音楽:おんがく:Music;発音:はつおん:Pronunciation;録音:ろくおん:Audio recording;本音:ほんね:Real intention / true feelings|旅:たび:Travel,Trip@旅行:りょこう:Travel / trip;旅館:りょかん:Japanese style inn;旅費:りょひ:Travel expenses;旅程:りょてい:Itinerary|勉:べん:Endeavor,Effort@勉強:べんきょう:Study / diligence;勤勉:きんべん:Diligent / hard-working;勉励:べんれい:Diligence / working hard;勉学:べんがく:Study / pursuit of learning|善:よ:Good,Virtuous@善良:ぜんりょう:Good / virtuous;改善:かいぜん:Improvement / reform;親善:しんぜん:Friendship / goodwill;偽善:ぎぜん:Hypocrisy|療:りょう:Heal,Cure,Medical treatment@治療:ちりょう:Medical treatment;療養:りょうよう:Recuperation / medical care;医療:いりょう:Medical care / service;診療:しんりょう:Medical examination and treatment|防:ふせ:Defend,Protect,Prevent@防止:ぼうし:Prevention;消防:しょうぼう:Firefighting / fire prevention;防衛:ぼうえい:Defense;国防:こくぼう:National defense|救:すく:Save,Rescue@救急:きゅうきゅう:First aid / emergency;救済:きゅうさい:Relief / rescue;救助:きゅうじょ:Rescue / aid;救命:きゅうめい:Lifesaving|護:ご:Safeguard,Protect@保護:ほご:Protection / custody;看護:かんご:Nursing;弁護:べんご:Defense / pleading;介護:かいご:Nursing care|衛:えい:Defense,Protection@衛星:えいせい:Satellite;防衛:ぼうえい:Defense;自衛:じえい:Self-defense;護衛:ごえい:Guard / escort|視:し:See,Look at,Vision@視力:しりょく:Eyesight / visual acuity;視覚:しかく:Sense of sight / vision;重視:じゅうし:Attaching importance / emphasis;無視:むし:Disregard / ignoring|査:さ:Investigate,Inspect@調査:ちょうさ:Investigation / survey;検査:けんさ:Inspection / audit;審査:しんさ:Judging / screening;捜査:そうさ:Criminal investigation / search|検:けん:Examine,Inspect@検討:けんとう:Consideration / examination;検索:けんさく:Search / retrieval;車検:しゃけん:Vehicle inspection;点検:てんけん:Inspection / checkup|証:しょう:Evidence,Proof,Certificate@証明:しょうめい:Proof / certification;保証:ほしょう:Guarantee / warranty;証拠:しょうこ:Evidence / proof;実証:じっしょう:Actual proof / verification|可:か:Possible,Acceptable,Can@可能:かのう:Possible / potential;許可:きょか:Permission / permit;不可:ふか:Impossible / unacceptable;可決:かけつ:Approval / adoption|否:いな:No,Negate,Decline@拒否:きょひ:Refusal / rejection;否定:ひてい:Denial / negation;賛否:さんぴ:Yes and no / for and against;安否:あんぴ:Safety / welfare|定:さだ:Determine,Fix,Decide@予定:よてい:Schedule / plan;決定:けってい:Decision;定期:ていき:Fixed term / regular;定価:ていか:List price / regular price|断:ことわ:Cut off,Decide,Refuse@判断:はんだん:Judgment / decision;決断:けつだん:Decision / resolve;横断:おうだん:Crossing / traversal;断水:だんすい:Water outage|案:あん:Plan,Idea,Draft@提案:ていあん:Proposal / suggestion;案内:あんない:Guidance / information;答案:とうあん:Exam examination paper;法案:ほうあん:Bill / legislative measure|件:けん:Matter,Case,Affair@事件:じけん:Incident / case / event;条件:じょうけん:Condition / term;用件:ようけん:Business / matter;案件:あんけん:Matter / item on agenda|条:じょう:Clause,Article@条件:じょうけん:Condition / terms;条約:じょうやく:Treaty / pact;箇条:かじょう:Item / clause;条文:じょうぶん:Text of regulations / articles|許:ゆる:Permit,Allow@許可:きょか:Permission / approval;免許:めんきょ:License / permit;特許:とっきょ:Patent;容許:ようきょ:Permission / tolerance|置:お:Put,Place@位置:いち:Position / location;装置:そうち:Equipment / device / installation;設置:せっち:Establishment / installation;処置:しょち:Treatment / measure|標:ひょう:Mark,Sign,Target@目標:もくひょう:Objective / target;標準:ひょうじゅん:Standard / norm;標高:ひょうこう:Elevation / altitude;標識:ひょうしき:Sign / marker|志:こころざし:Intention,Will,Motive@意志:いし:Will / intention;志望:しぼう:Wish / desire / aspiration;志気:しき:Morale / spirit;初志:しょし:Original intention|参:まい:Participate,Visit@参加:さんか:Participation / joining;参考:さんこう:Reference / consultation;参観:さんかん:Inspection / visit;参拝:さんぱい:Worship / visit to a shrine|共:とも:Together,Both@共通:きょうつう:Common / shared;共同:きょうどう:Joint / shared;公共:こうきょう:Public / communal;共感:きょうかん:Empathy / sympathy|協:きょう:Cooperation,Co@協力:きょうりょく:Cooperation / collaboration;妥協:だきょう:Compromise;協会:きょうかい:Association / society;協議:きょうぎ:Conference / consultation|効:き:Effect,Efficacy,Merit@効果:こうか:Effect / efficacy / result;有効:ゆうこう:Valid / effective;効率:こうりつ:Efficiency;効力:こうりょく:Effect / efficacy / validity|結:むす:Tie,Bind,Conclude@結果:けっか:Result / outcome;結婚:けっこん:Marriage;結論:けつろん:Conclusion;結末:けつまつ:End / conclusion|因:よ:Cause,Factor@原因:げんいん:Cause / origin;要因:よういん:Main factor / primary cause;死因:しいん:Cause of death;因縁:いんねん:Fate / destiny / connection|由:よし:Reason,Origin@自由:じゆう:Freedom / liberty;理由:りゆう:Reason / pretext;経由:けいゆ:Via / by way of;来由:らいゆう:Origin / source|河:かわ:River@河川:かせん:Rivers;運河:うんが:Canal / waterway;銀河:ぎんが:Galaxy / the Milky Way;黄河:こうが:Yellow River|流:なが:Flow,Current@流行:りゅうこう:Fashion / epidemic;交流:こうりゅう:Interchange / interaction;一流:いちりゅう:First-class / top-tier;合流:ごうりゅう:Confluence / merging|浴:あ:Bathe,Bask in@水浴:すいよく:Bathing / cold dip;浴場:よくじょう:Public bathhouse / bath;入浴:にゅうよく:Taking a bath;沐浴:もくよく:Ablution / bathing|正:ただ:Correct,Right,Just@正直:しょうじき:Honest / frank;正月:しょうがつ:New Year;正確:せいかく:Accurate / correct;正解:せいかい:Correct answer|角:かど:Corner,Angle,Horn@三角:さんかく:Triangle;四角:しかく:Square;方角:ほうがく:Direction / compass point;角度:かくど:Angle|丸:まる:Round,Circle,Whole@丸薬:がんやく:Pill / tablet;弾丸:だんがん:Bullet;砲丸:ほうがん:Cannonball / shot;丸太:まるた:Log|絵:え:Picture,Painting,Drawing@絵画:かいが:Painting / picture;油絵:あぶらえ:Oil painting;絵本:えほん:Picture book;挿絵:さしえ:Illustration / cut|図:ず:Map,Diagram,Plan@地図:ちず:Map;図面:ずめん:Drawing / blueprint / plan;合図:あいず:Signal / sign;意図:いと:Intention / aim",
     13: "各:おのおの:Each,Every@各自:かくじ:Each person / respectively;各国:かっこく:Each nation / all countries;各位:かくい:Everyone / ladies and gentlemen;各地:かくち:Every place / various parts|互:たが:Mutual,Reciprocal@相互:そうご:Mutual / reciprocal;交互:こうご:Alternate / reciprocal;互角:ごかく:Even / well-matched;互換:ごかん:Interchangeable / compatible|絡:から:Entwine,Contact@連絡:れんらく:Contact / communication;脈絡:みゃくらく:Chain of reasoning / context;短絡:たんらく:Short circuit / jump to conclusion;絡線:らくせん:Coils / wiring|似:に:Resemble,Similar@類似:るいじ:Resemblance / similarity;真似:まね:Imitation / mimicry;酷似:こくじ:Close resemblance;疑似:ぎじ:Pseudo / quasi / mock|鳴:な:Chirp,Ring,Sound@悲鳴:ひめい:Scream / shriek;共鳴:きょうめい:Resonance / sympathy;鳴動:めいどう:Rumble / humming;雷鳴:らいめい:Thunder peal|飾:かざ:Decorate,Ornament@装飾:そうしょく:Decoration / ornament;修飾:しゅうしょく:Modification / embellishment;過飾:かしょく:Overdecoration;服飾:ふくしょく:Attire / dress|帯:おび:Belt,Sash,Zone@地帯:ちたい:Area / zone / region;熱帯:ねったい:Tropics;連帯:れんたい:Solidarity;温帯:おんたい:Temperate zone|輪:わ:Ring,Wheel,Circle@車輪:しゃりん:Wheel;五輪:ごりん:The Olympics;指輪:ゆびわ:Ring (finger);年輪:ねんりん:Annual tree rings|湾:わん:Bay,Gulf@湾岸:わんがん:Bay coast / gulf;港湾:こうわん:Harbor / port;湾口:わんこう:Entrance of a bay;内湾:ないわん:Inlet / inner bay|丘:おか:Hill@丘陵:きゅうりょう:Hill / hillock;砂丘:さきゅう:Sand dune;丘頭:きゅうとう:Hilltop;丘原:きゅうげん:Hills and plains|坂:さか:Slope,Hill@登坂:とうはん:Climbing a slope;急坂:きゅうはん:Steep slope;坂道:さかみち:Sloping road / hill road;坂路:はんろ:Sloping path / ramp|沼:ぬま:Swamp,Bog@沼地:ぬまち:Swamp / marshland;泥沼:どろぬま:Bog / quagmire;湖沼:こしょう:Lakes and marshes;沼沢:しょうたく:Swamp / marsh|池:いけ:Pond@電池:でんち:Battery / cell;溜池:ためいけ:Reservoir / pond;池畔:ちはん:Pond edge;古池:ふるいけ:Old pond|田:た:Rice field@水田:すいでん:Paddy field;油田:ゆでん:Oil field;田園:でんえん:Country / rural / fields;田畑:たはた:Fields and farms|芝:しば:Lawn,Grass@芝生:しばふ:Lawn / grass;芝居:しばい:Play / drama;芝草:しばくさ:Lawn grass;芝地:しばち:Turf ground / lawn|句:く:Phrase,Haiku@俳句:はいく:Haiku poetry;文句:もんく:Complaint / phrase;語句:ごく:Words / phrases;字句:じく:Words and phrases / text|詞:し:Word,Poetry@動詞:どうし:Verb;名詞:めいし:Noun;歌詞:かし:Lyrics;祝詞:のりと:Shinto ritual prayer|詩:し:Poem,Poetry@詩人:しじん:Poet;詩集:ししゅう:Collection of poems;作詩:さくし:Writing poetry;漢詩:かんし:Chinese poetry|誌:し:Magazine,Document@雑誌:ざっし:Magazine / journal;日誌:にっし:Daily journal / logbook;地誌:ちし:Topography / regional geography;会誌:かいし:Society journal|筆:ふで:Brush,Writing@筆記:ひっき:Taking notes / written;鉛筆:えんぴつ:Pencil;執筆:しっぴつ:Writing / authoring;直筆:じきひつ:One's own handwriting|筒:つつ:Cylinder,Tube,Pipe@封筒:ふうとう:Envelope;円筒:えんとう:Cylinder;水筒:すいとう:Water bottle / canteen;筒先:つつさき:Nozzle / gun barrel|封:ふう:Seal,Enclose@封筒:ふうとう:Envelope;同封:どうふう:Enclosure (in letter);封鎖:ふうさ:Blockade / sealing off;開封:かいふう:Opening an envelope / breaking seal|籍:せき:Register,Enrollment@国籍:こくせき:Nationality / citizenship;戸籍:こせき:Family register;在籍:ざいせき:Enrollment / being registered;本籍:ほんせき:Permanent domicile|辞:や:Resign,Word,Dictionary@辞書:じしょ:Dictionary;辞任:じにん:Resignation;世辞:せじ:Flattery / compliment;祝辞:しゅくじ:Congratulatory address|典:てん:Code,Ceremony,Reference@古典:こてん:Classic / classics;辞典:じてん:Dictionary;式典:しきてん:Ceremony / rite;典型:てんけい:Type / model / pattern|型:かた:Model,Type,Mold@大型:おおがた:Large size;小型:こがた:Small size;模型:もけい:Model / replica;原型:げんけい:Prototype / original model|版:はん:Edition,Printing block@初版:しょはん:First edition;出版:しゅっぱん:Publication / publishing;版画:はんが:Woodblock print / engraving;新版:しんばん:New edition|刷:す:Print@印刷:いんさつ:Printing;増刷:ぞうさつ:Additional printing;刷毛:はけ:Brush / paintbrush;重刷:じゅうさつ:Reprint|刊:かん:Publish,Edition@朝刊:ちょうかん:Morning newspaper edition;夕刊:ゆうかん:Evening edition;刊行:かんこう:Publication / issue;週刊:しゅうかん:Weekly publication|創:つく:Create,Originate@創造:そうぞう:Creation;創立:そうりつ:Establishment / founding;独創:どくそう:Originality / invention;創刊:そうかん:Launching a publication|製:せい:Manufacture,Make@製品:せいひん:Manufactured goods / product;製造:せいぞう:Manufacture / production;複製:ふくせい:Reproduction / duplicate;製薬:せいやく:Pharmaceutical manufacture|写:うつ:Copy,Photograph@写真:しゃしん:Photograph / photo;写生:しゃせい:Sketching / drawing from nature;複写:ふくしゃ:Copy / duplication;描写:びょうしゃ:Depiction / description|真:ま:True,Real@写真:しゃしん:Photograph;真相:しんそう:Truth / real situation;真実:しんじつ:Truth / reality;真理:しんり:Truth|像:ぞう:Image,Statue,Figure@画像:がぞう:Image / picture;映像:えいぞう:Video / image / reflection;想像:そうぞう:Imagination / guess;銅像:どうぞう:Bronze statue|展:てん:Unfold,Exhibit,Expand@発展:はってん:Development / growth;展示:てんじ:Exhibition / display;展開:てんかい:Development / deployment;進展:しんてん:Progress / advance|影:かげ:Shadow,Silhouette@影響:えいきょう:Influence / effect;撮影:さつえい:Photographing / filming;幻影:げんえい:Illusion / phantom;陰影:いんえい:Shadow / nuance|響:ひび:Echo,Resound,Influence@影響:えいきょう:Influence / effect;音響:おんきょう:Acoustics / sound;反響:はんきょう:Echo / repercussion / response;響鳴:きょうめい:Resonance / echoing|劇:げき:Drama,Play@演劇:えんげき:Drama / theatre;悲劇:ひげき:Tragedy;喜劇:きげき:Comedy;劇場:げきじょう:Theatre / playhouse|舞:まい:Dance@舞台:ぶたい:Stage / scene;舞踊:ぶよう:Dancing / dance;見舞:みまい:Inquiry / visiting the sick;乱舞:らんぶ:Wild dance / boisterous dance|姿:すがた:Figure,Form,Appearance@姿勢:しせい:Posture / stance;容姿:ようし:Appearance / looks;姿態:したい:Attitude / posture / figure;後姿:うしろすがた:Appearance from behind|勢:いきお:Force,Vigor,Energy@姿勢:しせい:Posture / attitude;大勢:おおぜい:Many people / great crowd;勢力:せいりょく:Influence / power;情勢:じょうせい:Situation / conditions|担:にな:Shoulder,Bear@担当:たんとう:Being in charge;負担:ふたん:Burden / load;担任:たんにん:Homeroom teacher / in charge;担保:たんぽ:Collateral / security|任:まか:Responsibility,Entrust@責任:せきにん:Duty / responsibility;主任:しゅにん:Person in charge / senior;信任:しんにん:Trust / confidence;任務:にんむ:Mission / duty|退:しりぞ:Retire,Retreat,Withdraw@引退:いんたい:Retirement;退院:たいいん:Discharge from hospital;後退:こうたい:Retreat / backsliding;衰退:すいたい:Decline / decay|昇:のぼ:Rise,Ascend@上昇:じょうしょう:Rise / ascent;昇進:しょうしん:Promotion;昇給:しょうきゅう:Pay raise;昇降:しょうこう:Ascending and descending|就:つ:Settle in,Take position@就職:しゅうしょく:Finding employment;就任:しゅうにん:Inauguration / assumption of office;就寝:しゅうしん:Going to bed;成就:じょうじゅ:Fulfillment / realization|販:はん:Sell,Marketing@販売:はんばい:Sales / marketing;市販:しはん:Commercial / on the market;通販:つうはん:Mail order / online shopping;販路:はんろ:Market / sales channel|購:こう:Purchase,Buy@購入:こうにゅう:Purchase / buying;購買:こうばい:Purchase / procurement;購読:こうどく:Subscription (reading);購求:こうきゅう:Purchase / buying|値:ね:Price,Value@値段:ねだん:Price / cost;価値:かち:Value / worth;数値:すうち:Numerical value;安値:やすね:Low price|文:ぶん:Sentence,Text,Literature@文学:ぶんがく:Literature;文化:ぶんか:Culture / civilization;作文:さくぶん:Composition / essay;文字:もじ:Letter / character"
 };
+
+const nLevelMap = {
+    // --- JLPT N5 (101 Kanji in your dataset) ---
+    "一":"N5","二":"N5","三":"N5","四":"N5","五":"N5","六":"N5","七":"N5","八":"N5","九":"N5","十":"N5",
+    "百":"N5","千":"N5","万":"N5","円":"N5","年":"N5","月":"N5","日":"N5","時":"N5","分":"N5","半":"N5",
+    "毎":"N5","今":"N5","先":"N5","来":"N5","週":"N5","何":"N5","上":"N5","下":"N5","左":"N5","右":"N5",
+    "中":"N5","外":"N5","間":"N5","口":"N5","目":"N5","耳":"N5","手":"N5","足":"N5","人":"N5","子":"N5",
+    "女":"N5","男":"N5","父":"N5","母":"N5","友":"N5","名":"N5","気":"N5","天":"N5","空":"N5","雨":"N5",
+    "雪":"N5","車":"N5","馬":"N5","魚":"N5","山":"N5","川":"N5","土":"N5","水":"N5","火":"N5","木":"N5",
+    "花":"N5","金":"N5","本":"N5","文":"N5","字":"N5","学":"N5","校":"N5","生":"N5","私":"N5","国":"N5",
+    "社":"N5","店":"N5","駅":"N5","道":"N5","白":"N5","赤":"N5","青":"N5","黒":"N5","色":"N5","高":"N5",
+    "安":"N5","新":"N5","古":"N5","多":"N5","少":"N5","早":"N5","行":"N5","帰":"N5","食":"N5","飲":"N5",
+    "見":"N5","聞":"N5","読":"N5","書":"N5","話":"N5","買":"N5","言":"N5","立":"N5","休":"N5","入":"N5",
+    "出":"N5",
+
+    // --- JLPT N4 (130 Kanji in your dataset) ---
+    "乗":"N4","事":"N4","低":"N4","体":"N4","使":"N4","借":"N4","働":"N4","兄":"N4","光":"N4","写":"N4",
+    "冬":"N4","切":"N4","力":"N4","勉":"N4","動":"N4","区":"N4","医":"N4","去":"N4","台":"N4","味":"N4",
+    "品":"N4","員":"N4","図":"N4","地":"N4","堂":"N4","場":"N4","声":"N4","売":"N4","夏":"N4","夕":"N4",
+    "夜":"N4","妹":"N4","姉":"N4","始":"N4","室":"N4","家":"N4","寒":"N4","屋":"N4","市":"N4","広":"N4",
+    "度":"N4","建":"N4","引":"N4","弟":"N4","弱":"N4","強":"N4","心":"N4","思":"N4","悪":"N4","意":"N4",
+    "所":"N4","持":"N4","教":"N4","旅":"N4","族":"N4","明":"N4","映":"N4","春":"N4","昼":"N4","暑":"N4",
+    "暗":"N4","曜":"N4","服":"N4","朝":"N4","村":"N4","林":"N4","森":"N4","業":"N4","楽":"N4","歌":"N4",
+    "止":"N4","正":"N4","歩":"N4","民":"N4","池":"N4","注":"N4","洗":"N4","海":"N4","牛":"N4","物":"N4",
+    "特":"N4","犬":"N4","理":"N4","産":"N4","用":"N4","田":"N4","町":"N4","病":"N4","県":"N4","真":"N4",
+    "着":"N4","知":"N4","研":"N4","究":"N4","秋":"N4","答":"N4","紙":"N4","習":"N4","考":"N4","者":"N4",
+    "肉":"N4","茶":"N4","菜":"N4","薬":"N4","親":"N4","試":"N4","験":"N4","貸":"N4","質":"N4","走":"N4",
+    "起":"N4","転":"N4","軽":"N4","近":"N4","運":"N4","遠":"N4","都":"N4","重":"N4","門":"N4","院":"N4",
+    "集":"N4","音":"N4","頭":"N4","題":"N4","顔":"N4","風":"N4","飯":"N4","館":"N4","首":"N4","鳥":"N4"
+};
+
+function initDB() {
+    allKanjiFlat = [];
+    allCompoundsPool = [];
+    
+    for (let cat = 1; cat <= 13; cat++) {
+        kanjiDB[cat] = [];
+        let items = rawData[cat].split("|");
+        items.forEach(p => {
+            let [kanjiPart, compoundsPart] = p.split("@");
+            let [char, furigana, meaningsStr] = kanjiPart.split(":");
+            let meanings = meaningsStr ? meaningsStr.split(",") : [];
+            let level = nLevelMap[char] || "N3"; // Assign N5, N4, or default N3
+            
+            let compounds = [];
+            if (compoundsPart) {
+                compoundsPart.split(";").forEach(c => {
+                    let [word, reading, meaning] = c.split(":");
+                    if (word && reading && meaning) {
+                        let compObj = { word, reading, meaning, kanjiChar: char, level };
+                        compounds.push(compObj);
+                        allCompoundsPool.push(compObj);
+                    }
+                });
+            }
+            let entry = { char, furigana, meanings, compounds, cat, level };
+            kanjiDB[cat].push(entry);
+            allKanjiFlat.push(entry);
+        });
+    }
+    allCompoundMeanings = [...new Set(allCompoundsPool.map(c => c.meaning))];
+}
 
 // Global State
 let kanjiDB = {};
@@ -975,36 +1070,6 @@ function escapeHtml(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-// Parse Data 
-function initDB() {
-    allKanjiFlat = [];
-    allCompoundsPool = [];
-    
-    for (let cat = 1; cat <= 13; cat++) {
-        kanjiDB[cat] = [];
-        let items = rawData[cat].split("|");
-        items.forEach(p => {
-            let [kanjiPart, compoundsPart] = p.split("@");
-            let [char, furigana, meaningsStr] = kanjiPart.split(":");
-            let meanings = meaningsStr ? meaningsStr.split(",") : [];
-            let compounds = [];
-            if (compoundsPart) {
-                compoundsPart.split(";").forEach(c => {
-                    let [word, reading, meaning] = c.split(":");
-                    if (word && reading && meaning) {
-                        let compObj = { word, reading, meaning, kanjiChar: char };
-                        compounds.push(compObj);
-                        allCompoundsPool.push(compObj);
-                    }
-                });
-            }
-            let entry = { char, furigana, meanings, compounds, cat };
-            kanjiDB[cat].push(entry);
-            allKanjiFlat.push(entry);
-        });
-    }
-    allCompoundMeanings = [...new Set(allCompoundsPool.map(c => c.meaning))];
-}
 
 // Core Navigation
 function setMode(mode) {
@@ -1029,14 +1094,36 @@ function setMode(mode) {
         if (kanaModeEl) kanaModeEl.classList.add('active');
     }
 }
-
-function loadCategory(catId) {
+function loadCategory(catId, skipRender = false) {
+    if (!catId) return;
     currentCategory = parseInt(catId);
     currentList = kanjiDB[currentCategory];
     currentIndex = 0;
     currentSubStep = 0;
-    setMode('practice');
+    document.getElementById("levelSelect").value = "";
+    if (!skipRender) setMode('practice');
 }
+
+function loadLevel(lvl, skipRender = false) {
+    if (!lvl) return;
+    currentCategory = lvl;
+    if (lvl === "ALL") {
+        currentList = [...allKanjiFlat];
+    } else {
+        let seen = new Set();
+        currentList = allKanjiFlat.filter(k => {
+            if (k.level === lvl && !seen.has(k.char)) {
+                seen.add(k.char);
+                return true;
+            }
+            return false;
+        });
+    }
+    currentIndex = 0;
+    currentSubStep = 0;
+    if (!skipRender) setMode('practice');
+}
+   
 
 // Calculate responsive canvas sizes
 function getSingleCanvasSize() {
@@ -1099,7 +1186,7 @@ function renderPractice() {
 
     if (currentSubStep === 0) {
         // --- BASE KANJI MODE ---
-        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Base Character${blockTag}`;
+        document.getElementById("pracProgress").innerText = `[${item.level}] Kanji ${currentIndex + 1} / ${currentList.length} • Base Character${blockTag}`;
         document.getElementById("pracFurigana").innerText = item.furigana;
         document.getElementById("pracMeanings").innerText = item.meanings.join(", ");
         banner.innerText = `Trace stroke order for "${item.char}"`;
@@ -1149,7 +1236,7 @@ function renderPractice() {
         let compIdx = currentSubStep - 1;
         let comp = item.compounds[compIdx];
 
-        document.getElementById("pracProgress").innerText = `Kanji ${currentIndex + 1} / ${currentList.length} • Compound ${currentSubStep} / ${numCompounds}${blockTag}`;
+        document.getElementById("pracProgress").innerText = `[${item.level}] Kanji ${currentIndex + 1} / ${currentList.length} • Compound ${currentSubStep} / ${numCompounds}${blockTag}`;
         document.getElementById("pracFurigana").innerText = comp.reading;
         document.getElementById("pracMeanings").innerText = comp.meaning;
         banner.innerText = `Trace compound: 1. ${comp.word[0]}  then  2. ${comp.word[1]}`;
@@ -1947,11 +2034,83 @@ function endTest() {
     document.getElementById("testFeedback").innerText = "";
     document.getElementById("testSubmitBtn").style.display = "none";
 }
+// 1. Save progress automatically on every step
+function saveProgress() {
+    const state = {
+        currentCategory,
+        currentIndex,
+        currentSubStep,
+        completedSteps
+    };
+    localStorage.setItem("kanjiMasteryState", JSON.stringify(state));
+}
 
+// 2. Restore progress on page load
+function restoreProgress() {
+    const saved = localStorage.getItem("kanjiMasteryState");
+    if (!saved) return false;
+
+    try {
+        const state = JSON.parse(saved);
+        if (state.completedSteps) completedSteps = state.completedSteps;
+
+        if (typeof state.currentCategory === "string") {
+            // N5, N4, N3, or ALL
+            document.getElementById("levelSelect").value = state.currentCategory;
+            loadLevel(state.currentCategory, true);
+        } else if (state.currentCategory) {
+            // Category 1-13
+            document.getElementById("categorySelect").value = state.currentCategory;
+            loadCategory(state.currentCategory, true);
+        }
+
+        currentIndex = state.currentIndex || 0;
+        currentSubStep = state.currentSubStep || 0;
+        setMode('practice');
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// 3. Search by Kanji character, Hiragana reading, or English meaning
+function jumpToKanji() {
+    const q = document.getElementById("kanjiSearchInput").value.trim().toLowerCase();
+    if (!q) return;
+
+    // Search inside the currently selected list (Category or N-Level) first
+    let foundIdx = currentList.findIndex(k =>
+        k.char === q ||
+        k.furigana === q ||
+        k.meanings.some(m => m.toLowerCase().includes(q))
+    );
+
+    // If not in the current list, search across all 650 kanji and switch to ALL
+    if (foundIdx === -1) {
+        loadLevel("ALL");
+        document.getElementById("levelSelect").value = "ALL";
+        foundIdx = currentList.findIndex(k =>
+            k.char === q ||
+            k.furigana === q ||
+            k.meanings.some(m => m.toLowerCase().includes(q))
+        );
+    }
+
+    if (foundIdx !== -1) {
+        currentIndex = foundIdx;
+        currentSubStep = 0;
+        setMode('practice');
+        document.getElementById("kanjiSearchInput").value = "";
+    } else {
+        alert(`No kanji found matching "${q}".`);
+    }
+}
 // Initialize application
 window.onload = () => {
     initDB();
-    loadCategory("1");
+    if (!restoreProgress()) {
+        loadCategory("1");
+    }
 };
 </script>
 </body>
