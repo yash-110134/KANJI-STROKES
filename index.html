@@ -689,10 +689,6 @@
 <header>
     <h1>Kanji<span>Mastery</span></h1>
     <div class="controls">
-      <div class="search-bar">
-        <input type="text" id="kanjiSearchInput" placeholder="Search kanji, kana, or meaning..." onkeydown="if(event.key==='Enter') jumpToKanji()">
-        <button onclick="jumpToKanji()">Jump</button>
-    </div>
         <select id="categorySelect" onchange="loadCategory(this.value)">
             <option value="1">1. Numbers, Time & Days</option>
             <option value="2">2. Nature, Weather & Geography</option>
@@ -708,6 +704,7 @@
             <option value="12">12. Measurement, Systems & Infra</option>
             <option value="13">13. Core Terminology & Media</option>
         </select>
+
         <select id="levelSelect" onchange="loadLevel(this.value)">
             <option value="">-- Filter by JLPT Level --</option>
             <option value="N5">Stage 1: JLPT N5 (~101 Kanji)</option>
@@ -715,12 +712,13 @@
             <option value="N3">Stage 3: JLPT N3 (~419 Kanji)</option>
             <option value="ALL">All Kanji (650)</option>
         </select>
-        <button onclick="startRandomTest()">Start 20-Word Test</button>
-    </div>
-    <div class="mode-switch">
-        <button id="btnPractice" class="mode-btn active" onclick="setMode('practice')">Practice (Trace)</button>
-        <button id="btnKanaTest" class="mode-btn" onclick="startCurrentBlockKanaTest()">Kana Test (Review)</button>
+
         <button id="btnMCQ" class="mode-btn" onclick="setMode('mcq')">MCQ Quiz</button>
+        <button onclick="startRandomTest()">Start 20-Word Test</button>
+        <div class="search-bar" style="margin-top:0;">
+            <input type="text" id="kanjiSearchInput" placeholder="Search kanji, kana, or meaning..." onkeydown="if(event.key==='Enter') jumpToKanji()">
+            <button type="button" onclick="jumpToKanji()">🔍</button>
+        </div>
     </div>
 </header>
 
@@ -775,9 +773,11 @@
         </div>
         
         <div class="kana-card">
+            <div class="kana-card">
             <div id="kanaTestKanji" class="kana-display-word">一日</div>
-            <div id="kanaTestMeaning" class="kana-display-meaning">One day</div>
-            <div id="kanaTestKanjiSource" class="kana-display-source">Target Kanji: 一</div>
+            <div id="kanaTestMeaning" class="kana-display-meaning" style="display:none;"></div>
+            <div id="kanaTestKanjiSource" class="kana-display-source" style="display:none;"></div>
+        </div>
         </div>
         
         <p class="instruction-text" style="margin-bottom:8px;">Write the reading (furigana) in kana:</p>
@@ -1081,16 +1081,15 @@ function setMode(mode) {
     if (kanaModeEl) kanaModeEl.classList.remove('active');
 
     if (mode === 'practice') {
-        document.getElementById('btnPractice').classList.add('active');
+        document.getElementById('btnPractice')?.classList.add('active');
         document.getElementById('practiceMode').classList.add('active');
         renderPractice();
     } else if (mode === 'mcq') {
-        document.getElementById('btnMCQ').classList.add('active');
+        document.getElementById('btnMCQ')?.classList.add('active');
         document.getElementById('mcqMode').classList.add('active');
         renderMCQ();
     } else if (mode === 'kanaTest') {
-        let btnKana = document.getElementById('btnKanaTest');
-        if (btnKana) btnKana.classList.add('active');
+        document.getElementById('btnKanaTest')?.classList.add('active');
         if (kanaModeEl) kanaModeEl.classList.add('active');
     }
 }
